@@ -27,14 +27,21 @@ export default {
 	name: 'z-trans',
 	zhName: '审批流轴',
 	props: {
-		bid: "",
+		// 业务单据 id；为空时不发起请求（组件仅渲染已有数据）
+		bid: { type: [String, Number], default: '' },
+		// 可选：外部直接灌入审批流数据，便于在无后端环境展示
+		data: { type: Array, default: () => [] },
 	},
 	mounted() {
-		this.getTrans(this.bid);
+		if (this.data && this.data.length) this.trans = this.data;
+		else this.getTrans(this.bid);
 	},
 	watch: {
 		bid(val) {
 			this.getTrans(val);
+		},
+		data(v) {
+			this.trans = v || [];
 		},
 	},
 	data() {
@@ -45,13 +52,16 @@ export default {
 	methods: {
 		getTrans(bid) {
 			if (!bid) return;
+			// 依赖业务侧接口，未配置时静默跳过，避免 demo/模板环境报错
+			const url = this.api && this.api.Process && this.api.Process.GetTransBybId;
+			if (!url) return;
 			this.util.GET({
-				url: this.api.Process.GetTransBybId,
+				url,
 				data: {
 					bid: bid
 				},
 				success: async info => {
-					this.trans = info.trans;
+					this.trans = (info && info.trans) || [];
 				}
 			});
 		},

@@ -1,227 +1,157 @@
+/**
+ * 网络请求封装（跨端统一）
+ * - 基于 uni.request，H5 / 微信小程序 / 钉钉小程序 通用
+ * - 自动拼接基础地址、注入 token、统一处理业务状态码
+ * - 登录失效（UNAUTH_CODES）自动广播 http:unauthorized 事件，由 user.js 处理重登
+ *
+ * 用法：
+ *   get(url, data, options)        // GET
+ *   post(url, data, options)       // POST(JSON)
+ *   upload(url, filePath, options) // 文件上传
+ *   request({ url, method, data, header, loading, ignore })
+ */
+
+import config from './config.js'
 import cache from './cache.js'
-import {
-	getUser,
-	clearUser
-} from './user.js'
 
-let host = 'http://app.zhifeishengwu.com:1122'
-// let host = 'http://192.168.11.2:8082'
-let token = ''
-let errTimes = 0;
+const TOKEN_KEY = config.CACHE_PREFIX + 'token'
 
-export const setToken = function(_token) {
-	token = _token
-	cache.set('token', token)
+/* ------------------------- token ------------------------- */
+export function setToken(token) {
+  if (token) cache.set('token', token)
+  else cache.del('token')
+}
+export function getToken() {
+  return cache.get('token') || ''
+}
+export function clearToken() {
+  cache.del('token')
+}
+export function getHost() {
+  return config.API_BASE
 }
 
-export const getHost = function() {
-	return host
+/* ------------------------- 内部工具 ------------------------- */
+function buildUrl(url) {
+  if (/^https?:\/\//.test(url)) return url
+  return config.API_BASE + (url.startsWith('/') ? url : '/' + url)
 }
 
-export const post = async function(url, data, options, internal) {
-	if (internal) {
-		errTimes++;
-	} else {
-		errTimes = 0;
-	}
-	// 设置请求主机名
-	let hostcache = cache.get('hostcache')
-	if (hostcache && hostcache.url) {
-		host = hostcache.url
-	}
-	let userinfo = await getUser();
-	let header = {}
-	if (options && options.header) {
-		header = options.header
-	}
-	header['token'] = userinfo.token;
-	return new Promise((r, j) => {
-		dd.httpRequest({
-			url: host + url,
-			method: 'POST',
-			data: JSON.stringify(data),
-			headers: {
-				...header,
-				"Content-Type": "application/json",
-			},
-			dataType: 'json',
-			success: async function(res) {
-				if (res.status != 200) {
-					uni.showModal({
-						title: '请求失败',
-						content: '请求失败，错误码：' + res.status,
-						showCancel: false
-					})
-				} else if (options && options.ignore) {
-					r(res.data)
-					return
-				} else if (res.data.status == 408) {
-					if (errTimes < 2) {
-						clearUser();
-						userinfo = await getUser();
-						if (userinfo && userinfo.statusCode) {
-							post(url, data, options, true).then(_r => {
-								r(_r);
-							});
-							return;
-						}
-					}
-					r(false)
-					return
-				} else if (res.data.status != 200) {
-					uni.showModal({
-						title: '请求失败',
-						content: res.data.msg,
-						showCancel: false
-					})
-					return
-				}
-				r(res.data)
-			},
-			fail(err) {
-				console.error(err)
-				uni.showModal({
-					title: '请求失败',
-					content: typeof err == 'object' ? JSON.stringify(err) : err,
-					showCancel: false,
-					success: () => {
-						r(false)
-					}
-				})
-			},
-			complete() {
-				uni.hideLoading()
-			}
-		})
-	})
+function authHeader() {
+  const t = getToken()
+  return t ? { token: t } : {}
 }
 
-export const get = async function(url, options, internal) {
-	if (internal) {
-		errTimes++;
-	} else {
-		errTimes = 0;
-	}
-	let data = options ? (options.params ? options.params : {}) : {}
-	let header = {}
-	let dataType = options ? (options.dataType ? options.dataType : 'json') : 'json'
-	if (options && options.header) {
-		header = options.header
-	}
-	let userinfo = await getUser()
-	header['token'] = userinfo.token;
-	return new Promise((r, j) => {
-		if (!options || options.loading !== false) {
-			uni.showLoading({
-				title: '请求中...'
-			})
-		}
-		uni.request({
-			url: host + url,
-			method: 'GET',
-			data: data,
-			dataType: dataType,
-			header: {
-				...header,
-			},
-			success: async function(res) {
-				if (res.statusCode != 200) {
-					uni.showModal({
-						title: '请求失败',
-						content: '请求失败，错误码：' + res.statusCode,
-						showCancel: false
-					})
-					r(false)
-					return
-				}
-				if (options && options.ignore) {
-					r(res.data)
-					return
-				}
-				if (res.data.status == 408) {
-					if (errTimes < 2) {
-						clearUser();
-						userinfo = await getUser();
-						if (userinfo && userinfo.statusCode) {
-							get(url, options, true).then(_r => {
-								r(_r);
-							});
-							return;
-						}
-					}
-					r(false)
-					return
-				}
-				if (res.data.status != 200) {
-					uni.showModal({
-						title: '请求失败',
-						content: res.data.msg,
-						showCancel: false
-					})
-					r(false)
-					return
-				}
-				r(res.data)
-			},
-			fail(err) {
-				r(false)
-			},
-			complete() {
-				if (!options || options.loading !== false) {
-					uni.hideLoading()
-				}
-			}
-		})
-	})
+function handleUnauthorized() {
+  if (handleUnauthorized._ing) return
+  handleUnauthorized._ing = true
+  uni.showToast({ title: '登录失效，请重新登录', icon: 'none' })
+  uni.$emit('http:unauthorized')
+  setTimeout(() => { handleUnauthorized._ing = false }, 1500)
 }
 
-export const upload = function(url, options) {
-	// 设置请求主机名
-	let hostcache = cache.get('hostcache')
-	if (hostcache && hostcache.url) {
-		host = hostcache.url
-	}
-	return new Promise((r, j) => {
-		uni.uploadFile({
-			url: host + url,
-			...options,
-			success(res) {
-				if (res.statusCode != 200) {
-					uni.showModal({
-						title: '请求失败',
-						content: '请求失败，错误码：' + res.statusCode,
-						showCancel: false
-					})
-				} else if (options && options.ignore) {
-					r(res.data)
-					return
-				} else if (res.data.status != 200) {
-					uni.showModal({
-						title: '请求失败',
-						content: res.data.msg,
-						showCancel: false
-					})
-					return
-				}
-				r(res.data)
-			},
-			fail(err) {
-				r(false)
-			},
-			complete() {
-				uni.hideLoading()
-			},
-		})
-	})
+/* ------------------------- 核心请求 ------------------------- */
+export function request(options) {
+  const {
+    url,
+    method = 'GET',
+    data = {},
+    header = {},
+    loading = true,
+    ignore = false,
+    dataType = 'json',
+  } = options
+
+  if (loading) uni.showLoading({ title: '加载中...', mask: false })
+
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url: buildUrl(url),
+      method,
+      data,
+      header: {
+        'content-type': 'application/json',
+        ...authHeader(),
+        ...header,
+      },
+      dataType,
+      timeout: config.TIMEOUT,
+      success: (res) => {
+        if (res.statusCode !== 200) {
+          reject({ status: res.statusCode, msg: `网络错误(${res.statusCode})` })
+          return
+        }
+        const body = res.data
+        if (ignore) { resolve(body); return }
+        if (config.UNAUTH_CODES.includes(body.status)) {
+          handleUnauthorized()
+          reject({ status: body.status, msg: body.msg || '登录失效' })
+          return
+        }
+        if (body.status !== 200) {
+          uni.showToast({ title: body.msg || '请求失败', icon: 'none' })
+          reject({ status: body.status, msg: body.msg })
+          return
+        }
+        // 兼容两种后端返回结构：{ data: ... } 或裸数据
+        resolve(body.data !== undefined ? body.data : body)
+      },
+      fail: (err) => {
+        reject({ status: -1, msg: (err && err.errMsg) || '网络异常' })
+      },
+      complete: () => {
+        if (loading) uni.hideLoading()
+      },
+    })
+  })
 }
 
+/* ------------------------- 便捷方法 ------------------------- */
+export function get(url, data, options = {}) {
+  return request({ url, method: 'GET', data: data || {}, ...options })
+}
 
-const getsysinfo = function() {
-	return new Promise((r, j) => {
-		uni.getSystemInfo({
-			success: res => {
-				r(res);
-			}
-		})
-	});
+export function post(url, data, options = {}) {
+  return request({ url, method: 'POST', data: data || {}, ...options })
+}
+
+export function upload(url, filePath, options = {}) {
+  const { name = 'file', formData = {}, header = {}, loading = true } = options
+  if (loading) uni.showLoading({ title: '上传中...', mask: false })
+  return new Promise((resolve, reject) => {
+    uni.uploadFile({
+      url: buildUrl(url),
+      filePath,
+      name,
+      formData,
+      header: { ...authHeader(), ...header },
+      success: (res) => {
+        if (res.statusCode !== 200) {
+          reject({ status: res.statusCode, msg: `上传失败(${res.statusCode})` })
+          return
+        }
+        let body = res.data
+        if (typeof body === 'string') {
+          try { body = JSON.parse(body) } catch (e) { resolve(body); return }
+        }
+        if (config.UNAUTH_CODES.includes(body.status)) {
+          handleUnauthorized()
+          reject({ status: body.status, msg: body.msg || '登录失效' })
+          return
+        }
+        if (body.status !== 200) {
+          uni.showToast({ title: body.msg || '上传失败', icon: 'none' })
+          reject({ status: body.status, msg: body.msg })
+          return
+        }
+        resolve(body.data !== undefined ? body.data : body)
+      },
+      fail: (err) => {
+        reject({ status: -1, msg: (err && err.errMsg) || '上传异常' })
+      },
+      complete: () => {
+        if (loading) uni.hideLoading()
+      },
+    })
+  })
 }

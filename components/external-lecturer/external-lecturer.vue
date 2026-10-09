@@ -36,10 +36,10 @@ export default {
 	props: {
 		search: {
 			type: String,
-			default: () => 0,
+			default: () => '',
 		},
 		value: {
-			type: Number | String,
+			type: [Number, String],
 			default: () => 0
 		},
 		text: {

@@ -1,0 +1,177 @@
+// =========================================================================
+// 原始色板 / 尺寸令牌 (Palette / Primitives)
+// AUTO-GENERATED from melon-ui src/theme/tokens.json by scripts/sync-theme.mjs
+// 请勿手动编辑；修改设计令牌请改 melon-ui 的 tokens.json 后重新执行同步脚本。
+//
+// 颜色：与 melon-ui 保持完全一致（hex 与运行端无关）
+// 尺寸：melon-ui 的 px × 2 → rpx（750rpx = 375px 设计稿）
+// =========================================================================
+
+/* ---------- 原始色阶 ---------- */
+$blue-50: #F4F9FF;
+$blue-100: #DCEEFF;
+$blue-200: #B9DBFF;
+$blue-300: #96C5FF;
+$blue-400: #7CB2FF;
+$blue-500: #5192FF;
+$blue-600: #3B70DB;
+$blue-700: #2853B7;
+$blue-800: #193993;
+$blue-900: #0F277A;
+$blue-950: #0A1D5B;
+$red-50: #FFF3F3;
+$red-100: #FDE4D7;
+$red-200: #FCC3B0;
+$red-300: #F89A87;
+$red-400: #F17367;
+$red-500: #E83838;
+$red-600: #C72836;
+$red-700: #A71C34;
+$red-800: #861130;
+$red-900: #6F0A2D;
+$red-950: #4E041E;
+$green-50: #F4FDFA;
+$green-100: #CFFCDE;
+$green-200: #A0F9C7;
+$green-300: #63D19E;
+$green-400: #49DDA7;
+$green-500: #16C797;
+$green-600: #10AB90;
+$green-700: #0B8F85;
+$green-800: #077173;
+$green-900: #04545F;
+$green-950: #032C31;
+$gray-100: #F9FBFF;
+$gray-150: #E5EBF0;
+$gray-200: #CDD5DC;
+$gray-300: #B6BFC3;
+$gray-350: #9FA9AF;
+$gray-400: #6C7C86;
+$gray-450: #2F3A42;
+$gray-500: #283036;
+$gray-600: #1D262E;
+$gray-700: #141C26;
+$gray-800: #0C141F;
+$gray-900: #070D19;
+$orange-50: #FFF8F0;
+$orange-100: #FEF1D5;
+$orange-200: #FEE0AC;
+$orange-300: #FCCA83;
+$orange-400: #FAB463;
+$orange-500: #F79131;
+$orange-600: #D47023;
+$orange-700: #B15318;
+$orange-800: #8F390F;
+$orange-900: #762709;
+$orange-950: #3C1505;
+$purple-100: #E3E3FE;
+$purple-200: #C8C7FE;
+$purple-300: #ACAAFC;
+$purple-400: #9694F9;
+$purple-500: #7471F6;
+$purple-600: #5552D3;
+$purple-700: #3B38B1;
+$purple-800: #25248E;
+$purple-900: #161576;
+$white: #FFFFFF;
+
+/* ---------- 背景 ---------- */
+$bg-base: #F2F5F9;
+
+/* ---------- 字号（rpx） ---------- */
+$font-size-small: 24rpx;
+$font-size-medium: 28rpx;
+$font-size-large: 32rpx;
+$font-size-xlarge: 36rpx;
+$font-size-2xlarge: 40rpx;
+$font-size-3xlarge: 48rpx;
+$font-size-4xlarge: 56rpx;
+$font-size-5xlarge: 72rpx;
+
+/* ---------- 字重 ---------- */
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+/* ---------- 行高 ---------- */
+$line-height-none: 110%;
+$line-height-tight: 130%;
+$line-height-normal: 150%;
+$line-height-loose: 180%;
+
+/* ---------- 间距（rpx） ---------- */
+$space-margin-xsmall: 8rpx;
+$space-margin-small: 16rpx;
+$space-margin-medium: 32rpx;
+$space-margin-large: 48rpx;
+$space-margin-xlarge: 64rpx;
+$space-padding-xsmall: 12rpx;
+$space-padding-xxsmall: 8rpx;
+$space-padding-small: 16rpx;
+$space-padding-medium: 24rpx;
+$space-padding-large: 32rpx;
+$space-padding-xlarge: 48rpx;
+
+/* ---------- 圆角（rpx） ---------- */
+$border-radius-xsmall: 4rpx;
+$border-radius-small: 6rpx;
+$border-radius-medium: 8rpx;
+$border-radius-large: 16rpx;
+$border-radius-xlarge: 24rpx;
+$border-radius-2xlarge: 32rpx;
+$border-radius-3xlarge: 40rpx;
+$border-radius-4xlarge: 48rpx;
+$border-radius-full: 50%;
+
+/* ---------- 控件尺寸（rpx） ---------- */
+$size-table-height-small: 64rpx;
+$size-table-height-medium: 80rpx;
+$size-table-height-large: 96rpx;
+$size-table-header-height-small: 64rpx;
+$size-table-header-height-medium: 80rpx;
+$size-table-header-height-large: 96rpx;
+$size-input-height-small: 48rpx;
+$size-input-height-medium: 64rpx;
+$size-input-height-large: 80rpx;
+$size-icon-xsmall: 24rpx;
+$size-icon-small: 28rpx;
+$size-icon-medium: 32rpx;
+$size-icon-large: 36rpx;
+$size-icon-xlarge: 40rpx;
+$size-icon-2xlarge: 48rpx;
+$size-icon-3xlarge: 64rpx;
+$size-icon-4xlarge: 84rpx;
+$size-icon-5xlarge: 96rpx;
+$size-avatar-xsmall: 40rpx;
+$size-avatar-small: 56rpx;
+$size-avatar-medium: 64rpx;
+$size-avatar-large: 96rpx;
+$size-avatar-xlarge: 108rpx;
+$size-avatar-xxlarge: 128rpx;
+$size-button-height-small: 48rpx;
+$size-button-height-medium: 64rpx;
+$size-button-height-large: 80rpx;
+$size-button-min-width-small: 116rpx;
+$size-button-min-width-medium: 148rpx;
+$size-button-min-width-large: 160rpx;
+$size-divider-height: 2rpx;
+$size-tag-height-small: 40rpx;
+$size-tag-height-medium: 48rpx;
+$size-tag-height-large: 56rpx;
+$size-select-height-small: 48rpx;
+$size-select-height-medium: 64rpx;
+$size-select-height-large: 80rpx;
+$size-panel-height: 100rpx;
+$size-modal-header-height: 100rpx;
+
+/* ---------- 边框 / 透明度 ---------- */
+$border-width-medium: 2rpx;
+$border-width-large: 4rpx;
+$border-style-solid: solid;
+$border-style-dashed: dashed;
+$opacity-overlay: 0.2;
+$opacity-overlay-button-bg: 0.1;
+
+/* ---------- 字体族 ---------- */
+$font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+$font-family-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;

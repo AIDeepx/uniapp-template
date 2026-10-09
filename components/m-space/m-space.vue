@@ -1,10 +1,10 @@
 <template>
-	<view class="z-space" :style="{ width: width, height: height }"></view>
+	<view class="m-space" :style="{ width: width, height: height }"></view>
 </template>
 
 <script>
 export default {
-	name: 'z-space',
+	name: 'm-space',
 	props: {
 		width: {
 			type: String,
@@ -22,6 +22,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.z-space {
+.m-space {
 }
 </style>

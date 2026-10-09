@@ -1,10 +1,24 @@
 {
-	"pages": [],
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^m-(.*)": "@/components/m-$1/m-$1.vue",
+			"^external-(.*)": "@/components/external-$1/external-$1.vue"
+		}
+	},
+	"pages": [
+		{
+			"path": "pages/demo/index",
+			"style": {
+				"navigationBarTitleText": "组件 Demo",
+				"enablePullDownRefresh": false
+			}
+		}
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarTitleText": "uniapp-template",
+		"navigationBarBackgroundColor": "#F5F9FC",
+		"backgroundColor": "#F5F9FC"
 	}
-	
 }

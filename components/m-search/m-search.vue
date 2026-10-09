@@ -55,10 +55,6 @@
 				this.mValue = v;
 			},
 		},
-		model: {
-			prop: 'value',
-			event: 'change'
-		},
 		mounted() {
 			this.mValue = this.value;
 		},
@@ -86,7 +82,7 @@
 				if (this.mValue[row.field] === oitem.id) {
 					this.mValue[row.field] = '';
 				} else {
-					this.$set(this.mValue, row.field, oitem.id);
+					this.mValue[row.field] = oitem.id;
 				}
 				this.$emit('update:value', this.mValue);
 				this.$emit('change', this.mValue);
@@ -176,7 +172,7 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 100vh;
+		height: 100%;
 		overflow: hidden;
 		transition: all 0.3s ease;
 		background-color: rgba($color: #000000, $alpha: 0);
@@ -190,7 +186,7 @@
 		}
 		.content {
 			transition: all 0.5s ease;
-			transform: translateY(-100vh);
+			transform: translateY(-100%);
 			background-color: $white;
 			box-sizing: border-box;
 			overflow: hidden;

@@ -10,7 +10,7 @@
 				<view class="desc">{{ item }}</view>
 			</view>
 		</view>
-		<view class="step-content" v-if="i === current - 1">
+		<view class="step-content">
 			<slot></slot>
 		</view>
 	</view>
@@ -18,7 +18,10 @@
 
 <script>
 	export default {
-		props: ['steps', 'current'],
+		props: {
+			steps: { type: Array, default: () => [] },
+			current: { type: Number, default: 1 },
+		},
 		name: 'm-step',
 		data() {
 			return {};

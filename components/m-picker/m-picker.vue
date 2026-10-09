@@ -1,9 +1,14 @@
 <template>
-	<view class="z-picker">
-		<picker :value="mValue" :range="range" :range-key="rangeText" @change="change" :disabled="disabled">
-			<view class="content">
-				<view class="text" v-if="text">{{text}}</view>
-				<view class="placeholder" v-if="!text">{{placeholder}}</view>
+	<view class="m-picker">
+		<picker
+			:value="mIndex"
+			:range="range"
+			:range-key="rangeText"
+			:disabled="disabled"
+			@change="onChange">
+			<view class="m-picker__content">
+				<view class="m-picker__text" v-if="mText">{{ mText }}</view>
+				<view class="m-picker__placeholder" v-else>{{ placeholder }}</view>
 			</view>
 		</picker>
 	</view>
@@ -12,88 +17,60 @@
 <script>
 	export default {
 		name: 'm-picker',
+		zhName: '下拉选择器',
 		props: {
-			value: {
-				type: Number | String,
-				default: () => 0,
-			},
-			range: {
-				type: Array,
-				default: () => [],
-			},
-			rangeValue: {
-				type: String,
-				default: () => "id",
-			},
-			rangeText: {
-				type: String,
-				default: () => "text",
-			},
-			placeholder: {
-				type: String,
-				default: () => "请选择",
-			},
-			disabled: {
-				type: Boolean,
-				default: () => false,
-			},
+			modelValue: { type: [Number, String], default: '' },
+			range: { type: Array, default: () => [] },
+			rangeValue: { type: String, default: 'id' },
+			rangeText: { type: String, default: 'text' },
+			placeholder: { type: String, default: '请选择' },
+			disabled: { type: Boolean, default: false },
 		},
-		mounted() {
-			this.setValue(this.value);
-		},
+		inject: { formItemContext: { default: null } },
 		data() {
-			return {
-				mValue: 0,
-				text: '',
-			};
+			return { mIndex: 0, mText: '' }
 		},
-		watch: {
-			value(val) {
-				if (val === this.mValue) return;
-				this.setValue(val);
-			},
-		},
+		watch: { modelValue(val) { this.setValue(val) } },
+		mounted() { this.setValue(this.modelValue) },
 		methods: {
 			setValue(val) {
-				if (val !== '') {
-					if (typeof val === 'string' && /\d+/.test(val)) {
-						val = parseInt(val);
-					}
-					for (let i = 0; i < this.range.length; i++) {
-						if (this.range[i][this.rangeValue] === val) {
-							this.mValue = i;
-							this.text = this.range[i][this.rangeText]
-							break;
-						}
-					}
+				this.mText = ''
+				this.mIndex = 0
+				if (val === '' || val === null || val === undefined) return
+				const idx = this.range.findIndex((it) => it && it[this.rangeValue] === val)
+				if (idx > -1) {
+					this.mIndex = idx
+					this.mText = this.range[idx][this.rangeText]
 				}
 			},
-			change(e) {
-				this.mValue = e.detail.value;
-				if (this.range[e.detail.value] && this.range[e.detail.value][this.rangeValue] !== undefined) {
-					this.text = this.range[e.detail.value][this.rangeText];
-					this.$emit('update:value', this.range[e.detail.value][this.rangeValue]);
-					this.$emit('change', this.range[e.detail.value][this.rangeValue]);
-				}
+			onChange(e) {
+				const idx = e.detail.value
+				this.mIndex = idx
+				const item = this.range[idx]
+				this.mText = item ? item[this.rangeText] : ''
+				const v = item ? item[this.rangeValue] : ''
+				this.$emit('update:modelValue', v)
+				this.$emit('input', v)
+				this.$emit('change', v)
+				this.$emit('update:value', v)
+				if (this.formItemContext) this.formItemContext.setValue(v)
 			},
 		},
-	};
+	}
 </script>
 
 <style lang="scss" scoped>
-	.z-picker {
+	.m-picker {
 		width: 100%;
 		height: 100rpx;
 		line-height: 100rpx;
 		box-sizing: border-box;
 
-		.content {
+		&__content {
 			text-align: right;
 			font-size: 30rpx;
-
-			.placeholder {
-				color: $placeholder;
-			}
+			color: $black;
 		}
+		&__placeholder { color: $placeholder; }
 	}
 </style>

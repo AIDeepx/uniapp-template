@@ -15,7 +15,7 @@
 	export default {
 		name: 'z-radio',
 		props: {
-			value: "",
+			value: { type: [String, Number], default: '' },
 			disabled: {
 				type: Boolean,
 				default: () => false,

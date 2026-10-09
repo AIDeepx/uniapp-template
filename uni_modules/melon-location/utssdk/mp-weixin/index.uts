@@ -1,0 +1,76 @@
+import {
+	GetLocationOptions,
+	GetLocationSuccess,
+	ChooseLocationOptions,
+	OpenLocationOptions
+} from "../interface.ts";
+import {
+	getConfig
+} from "../config.ts";
+import {
+	transformCoordinate
+} from "../map_utils.ts"
+import { 
+	getGeocode as tiandituGetGeocode, 
+	chooseLocation as tiandituChooseLocation,
+	openLocation as tiandituOpenLocation
+} from '../tianditu.ts';
+
+export function getLocation(options: GetLocationOptions) {
+	if (!options) {
+		console.warn("请设置options参数");
+		return;
+	}
+
+	const conf = getConfig();
+
+	if (!conf) {
+		console.warn("请设置第三方地图Key，配置文件位于config.ts");
+		return;
+	}
+
+	// @ts-ignore
+	uni.getLocation({
+		...options,
+		success: (res : any) => {
+			if (!options.geocode) {
+				options.success && options.success(res);
+				return;
+			}
+			const tc = _transformCoordinate(res.longitude, res.latitude, options.type)
+			
+			switch (conf.map) {
+				case "tianditu":
+					tiandituGetGeocode({...res, latitude: tc[1], longitude: tc[0]}, conf.key).then((result : GetLocationSuccess) => {
+						options.success && options.success(result);
+					}).catch((err : any) => {
+						options.fail && options.fail(err);
+					});
+					break;
+			}
+		}
+	});
+}
+
+export function chooseLocation(options: ChooseLocationOptions) {
+	uni.chooseLocation(options);
+}
+
+export function openLocation(options: OpenLocationOptions) {
+	uni.openLocation(options);
+}
+
+function _transformCoordinate(lng: number, lat: number, type?: string) {
+	const sourceType = type || 'wgs84';
+	let targetType = "wgs84";
+	let mapType = getConfig().map;
+	if (mapType == "baidu") {
+		targetType = 'bd09';
+	} else if (mapType == "amap" || mapType == "qqmap") {
+		targetType = 'gcj02';
+	}
+	if (sourceType == targetType) {
+		return [lng, lat];
+	}
+	return transformCoordinate[sourceType+"to"+targetType as keyof typeof transformCoordinate](lng, lat);
+}

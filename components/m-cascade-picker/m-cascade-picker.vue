@@ -1,10 +1,10 @@
 <template>
 	<view class="m-cascade-picker">
-		<m-popup :value.sync="visible" title="请选择" @change="popupChange" :border="false" :disabled="disabled">
+		<m-popup v-model="visible" title="请选择" @change="popupChange" :border="false" :disabled="disabled">
 			<slot />
 			<template v-slot:content>
 				<view class="wrapper">
-					<m-tabs :value.sync="tabIdx" :data="tabData" size="small" justify-content="flex-start" border
+					<m-tabs v-model:value="tabIdx" :data="tabData" size="small" justify-content="flex-start" border
 						@change="tabChange"></m-tabs>
 					<scroll-view class="m-list" scroll-y>
 						<view class="m-item" v-for="(item, i) in mList" :key="i" @click="select(item, i)">
@@ -109,11 +109,7 @@
 			},
 			getTabData(row) {
 				const id = row ? row[this.dataValue] : 0;
-				this.http.get(this.url, {
-					params: {
-						id,
-					}
-				}).then(res => {
+				this.http.get(this.url, { id }).then(res => {
 					if (res.status == 200) {
 						this.mData.set(id, res.list);
 						this.mList = res.list;
@@ -123,12 +119,12 @@
 			select(row, i) {
 				this.clearValue();
 				this.$nextTick(() => {
-					this.$set(this.mValueShow, this.tabIdx, row[this.dataText]);
-					this.$set(this.mValue, this.tabIdx, row[this.dataValue]);
-					this.$set(this.mValueIdx, this.tabIdx, i);
-					this.$set(this.tabData, this.tabIdx, row[this.dataText]);
+					this.mValueShow[this.tabIdx] = row[this.dataText];
+					this.mValue[this.tabIdx] = row[this.dataValue];
+					this.mValueIdx[this.tabIdx] = i;
+					this.tabData[this.tabIdx] = row[this.dataText];
 					if (!this.tabData[this.tabIdx + 1]) {
-						this.$set(this.tabData, this.tabIdx + 1, "");
+						this.tabData[this.tabIdx + 1] = "";
 					}
 					if (!row.leaf) {
 						this.$nextTick(() => {
@@ -152,10 +148,10 @@
 				const len = this.mValue.length;
 				for (let i=0; i<len; i++) {
 					if (i > this.tabIdx) {
-						this.$set(this.mValue, i, "");
-						this.$set(this.mValueIdx, i, "");
-						this.$set(this.tabData, i, "");
-						this.$set(this.mValueShow, i, "");
+						this.mValue[i] = "";
+						this.mValueIdx[i] = "";
+						this.tabData[i] = "";
+						this.mValueShow[i] = "";
 					}
 				}
 			}
@@ -167,7 +163,7 @@
 	.m-cascade-picker {
 		.wrapper {
 			display: flex;
-			height: 80vh;
+			height: 100%;
 			overflow: hidden;
 			flex-direction: column;
 

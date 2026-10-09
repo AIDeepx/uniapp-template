@@ -1,0 +1,110 @@
+/* =========================================================================
+ * 语义令牌 (Semantic Tokens)
+ *
+ * 这是 melon-ui「双层令牌」体系在移动端的编译期实现：
+ *   L1 原始层  → palette.scss（由 tokens.json 生成，色板与尺寸，已换算 rpx）
+ *   L2 语义层  → 本文件（把 L1 组合成「用途令牌」）
+ *
+ * 为什么不用 melon-ui 的 CSS 变量（--melon-*）方案？
+ *   melon-ui 用 `:root` + `var()` 承载语义层，但小程序没有 `:root` 选择器、
+ *   也无法操作 document切主题。故改用 SCSS 变量在编译期落值，三端通用。
+ *   代价是不能运行时切主题（见 theme-dark.scss 的按需引入方案）。
+ *
+ * 命名与 melon-ui 语义层保持一致（brand/success/error/warning/text/border/
+ * divider/icon/button/container），便于与 PC 端对照维护。
+ * ========================================================================= */
+
+@import './palette.scss';
+
+/* ---------- 品牌 / 功能色（语义） ---------- */
+$color-brand:        $blue-500;
+$color-brand-hover:  $blue-400;
+$color-brand-active: $blue-600;
+$color-brand-light:  $blue-50;
+
+$color-success:        $green-500;
+$color-success-hover:  $green-400;
+$color-success-active: $green-600;
+
+$color-error:        $red-500;
+$color-error-hover:  $red-400;
+$color-error-active: $red-600;
+$color-error-light:  $red-50;
+
+$color-warning:        $orange-500;
+$color-warning-hover:  $orange-400;
+$color-warning-active: $orange-600;
+
+/* ---------- 文字 ---------- */
+$text-color-primary:        $gray-500;
+$text-color-secondary:      $gray-400;
+$text-color-tertiary:       $gray-350;
+$text-color-placeholder:    $gray-200;
+$text-color-disabled:       $gray-300;
+$text-color-brand:          $blue-500;
+$text-color-inverse:        $white;
+
+/* ---------- 背景 ---------- */
+$bg-color-base:      $bg-base;   // 页面底色
+$bg-color-container: $white;     //卡片/面板
+$bg-color-mask:      rgba(0, 0, 0, 0.6); // 遮罩
+
+/* ---------- 边框 ---------- */
+$border-color-base:$gray-200;
+$border-color-light:      $gray-150;
+$border-color-brand:      $blue-500;
+$border-color-error:      $red-500;
+
+$divider-color: $gray-150;
+
+/* ---------- 图标 ---------- */
+$icon-color-primary:   $gray-500;
+$icon-color-secondary: $gray-300;
+$icon-color-brand:     $blue-500;
+
+/* ---------- 圆角 ---------- */
+$radius-xs:$border-radius-xsmall;
+$radius-sm:   $border-radius-small;
+$radius-md:   $border-radius-medium;
+$radius-lg:   $border-radius-large;
+$radius-xl:   $border-radius-xlarge;
+$radius-round: $border-radius-full;
+
+/* ---------- 间距 ---------- */
+$spacing-xs: $space-margin-xsmall;
+$spacing-sm: $space-margin-small;
+$spacing-md: $space-margin-medium;
+$spacing-lg: $space-margin-large;
+$spacing-xl: $space-margin-xlarge;
+
+/* =========================================================================
+ * 兼容层：模板原有变量名 → 语义令牌
+ * 这些是 30+ 组件实际引用的名字，保持不变即可零改动接入 melon-ui 主题。
+ * ========================================================================= */
+$blue:$color-brand;
+$red:          $color-error;
+$green:        $color-success;
+$orange:       $color-warning;
+$gray:         $border-color-base;
+$white:        $white;
+
+$black:      $text-color-primary;
+$black5:     $text-color-secondary;
+$black9:     $text-color-tertiary;
+$placeholder: $text-color-placeholder;
+
+$pageBg:  $bg-color-base;
+$bg-mask: $bg-color-mask;
+
+/* ---------- 层级 ---------- */
+$z-mask:   900;
+$z-popup:  1000;
+$z-toast:  2000;
+
+/* ---------- 安全区 ---------- */
+$safe-bottom: env(safe-area-inset-bottom);
+$safe-top:    env(safe-area-inset-top);
+
+/* ---------- 深色主题（可选，默认关闭） ---------- */
+/* 需深色时取消下面一行的注释（放在文件最后，确保覆盖上面所有变量） */
+// @import './theme-dark.scss';

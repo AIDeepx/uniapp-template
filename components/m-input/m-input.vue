@@ -1,84 +1,71 @@
 <template>
-	<view class="z-input">
-		<text v-if="disabled" :class="{placeholder: !mValue}" :style="{textAlign}">{{mValue || placeholder }}</text>
-		<input v-if="!disabled" class="input" :style="{textAlign}" :type="type" v-model="mValue" @input="setValue" :placeholder="placeholder" />
+	<view class="m-input" :style="{ textAlign }">
+		<text v-if="disabled" :class="{ 'm-input__placeholder': !mValue }">{{ mValue || placeholder }}</text>
+		<input
+			v-else
+			class="m-input__control"
+			:type="type"
+			:value="mValue"
+			:placeholder="placeholder"
+			:disabled="disabled"
+			@input="onInput" />
 	</view>
 </template>
 
 <script>
 	export default {
-		name: "m-input",
+		name: 'm-input',
 		zhName: '输入框',
 		props: {
-			value: {
-				type: String | Number,
-				default: () => "",
-			},
-			type: {
-				type: String,
-				default: () => "text",
-			},
-			placeholder: {
-				type: String,
-				default: () => "请输入",
-			},
-			disabled: {
-				type: Boolean,
-				default: () => false,
-			},
-			textAlign: {
-				type: String,
-				default: () => "right",
-			},
+			modelValue: { type: [String, Number], default: '' },
+			type: { type: String, default: 'text' },
+			placeholder: { type: String, default: '请输入' },
+			disabled: { type: Boolean, default: false },
+			textAlign: { type: String, default: 'right' },
 		},
-		model: {
-			prop: 'value',
-			event: 'change'
-		},
+		inject: { formItemContext: { default: null } },
 		data() {
-			return {
-				mValue: '',
-			};
+			return { mValue: '' }
 		},
-		mounted() {
-			this.mValue = this.value;
-		},
-		watch: {
-			value(val) {
-				this.mValue = val;
-			},
-		},
+		watch: { modelValue(val) { this.mValue = val } },
+		mounted() { this.mValue = this.modelValue },
 		methods: {
-			setValue(e) {
-				this.mValue = e.detail.value;
-				this.$emit('update:value', e.detail.value);
-				this.$emit('change', e.detail.value);
+			onInput(e) {
+				this.mValue = e.detail.value
+				this._emit(this.mValue)
 			},
-		}
+			_emit(v) {
+				this.$emit('update:modelValue', v)
+				this.$emit('input', v)
+				this.$emit('change', v)
+				this.$emit('update:value', v)
+				if (this.formItemContext) this.formItemContext.setValue(v)
+			},
+		},
 	}
 </script>
 
 <style lang="scss" scoped>
-	.z-input {
+	.m-input {
 		width: 100%;
-		height: 88rpx;
-		line-height: 88rpx;
 		box-sizing: border-box;
 		text-align: right;
 		font-size: 30rpx;
+		color: $black;
 		background-color: $white;
 
-		.input {
-			width: inherit;
+		&__control {
+			width: 100%;
 			height: 88rpx;
 			line-height: 88rpx;
 			box-sizing: border-box;
-			text-align: right;
+			text-align: inherit;
 			font-size: 30rpx;
+			color: $black;
 		}
 
-		.placeholder {
-			color: #CDD5DC;
+		&__placeholder {
+			color: $placeholder;
 		}
 	}
 </style>

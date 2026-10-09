@@ -1,0 +1,79 @@
+/* =========================================================================
+ * 深色主题（可选，按需引入）
+ *
+ * 现状：melon-ui 的 tokens.json 目前没有 dark set（PC 端深色主题暂停），
+ *   故本文件提供的是一套「移动端深色」语义值，按PC 端 dark set 补齐后
+ *   可直接改为由 scripts/sync-theme.mjs 生成。
+ *
+ * 为什么是「编译期」而非运行时切换？
+ *   PC 端靠 `:root[theme-mode="dark"]` + CSS 变量运行时切换；
+ *   但小程序没有 :root、也不能操作 document，故移动端改为编译期方案：
+ *   需要深色时，在 uni.scss 中把本文件 import 到 semantic.scss 之后覆盖变量。
+ *
+ * 用法（二选一）：
+ *   1. 全局深色：uncomment 掉 semantic.scss 末尾的 @import './theme-dark.scss';
+ *   2. 按需深色：新建一个 scss 入口，@import './theme-dark.scss'; 后再写组件样式。
+ * ========================================================================= */
+
+/* ---------- 品牌 / 功能色（深色下降低明度，避免刺眼） ---------- */
+$color-brand:        $blue-400;
+$color-brand-hover:  $blue-300;
+$color-brand-active: $blue-500;
+$color-brand-light:  $blue-950;
+
+$color-success:        $green-400;
+$color-success-hover:  $green-300;
+$color-success-active: $green-500;
+
+$color-error:        $red-400;
+$color-error-hover:  $red-300;
+$color-error-active: $red-500;
+$color-error-light:  $red-950;
+
+$color-warning:        $orange-400;
+$color-warning-hover:  $orange-300;
+$color-warning-active: $orange-500;
+
+/* ---------- 文字（深色下用灰阶高段） ---------- */
+$text-color-primary:        $gray-100;
+$text-color-secondary:      $gray-300;
+$text-color-tertiary:       $gray-400;
+$text-color-placeholder:    $gray-500;
+$text-color-disabled:       $gray-600;
+$text-color-brand:          $blue-400;
+$text-color-inverse:        $gray-900;
+
+/* ---------- 背景 ---------- */
+$bg-color-base:      $gray-900;
+$bg-color-container: $gray-800;
+$bg-color-mask:      rgba(0, 0, 0, 0.75);
+
+/* ---------- 边框 ---------- */
+$border-color-base:   $gray-700;
+$border-color-light:  $gray-800;
+$border-color-brand:  $blue-400;
+$border-color-error:  $red-400;
+
+$divider-color: $gray-800;
+
+/* ---------- 图标 ---------- */
+$icon-color-primary:   $gray-200;
+$icon-color-secondary: $gray-500;
+$icon-color-brand:     $blue-400;
+
+/* =========================================================================
+ * 兼容层：同步覆盖模板变量名（与 semantic.scss 保持一一对应）
+ * ========================================================================= */
+$blue: $color-brand;
+$red:          $color-error;
+$green:        $color-success;
+$orange:       $color-warning;
+$gray:         $border-color-base;
+
+$black:       $text-color-primary;
+$black5:      $text-color-secondary;
+$black9:      $text-color-tertiary;
+$placeholder: $text-color-placeholder;
+
+$pageBg:  $bg-color-base;
+$bg-mask: $bg-color-mask;

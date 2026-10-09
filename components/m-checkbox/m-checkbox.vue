@@ -17,16 +17,9 @@
 		zhName: '多选框',
 		editorVisible: false,
 		props: {
-			checked: {
-				default: false,
-			},
-			value: {
-				default: '',
-			},
-			direction: {
-				default: 'left',
-			}
-
+			checked: { type: Boolean, default: false },
+			value: { type: [String, Number], default: '' },
+			direction: { type: String, default: 'left' },
 		},
 		data() {
 			return {
@@ -50,7 +43,7 @@
 				this.checkboxGroupContext.setCtx(this);
 			}
 		},
-		beforeDestroy() {
+		beforeUnmount() {
 			if (this.checkboxGroupContext) {
 				this.checkboxGroupContext.delCtx(this);
 			}

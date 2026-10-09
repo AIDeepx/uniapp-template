@@ -1,66 +1,87 @@
 <template>
-	<view :class="{'form-item': true, 'btn-submit': hasButtonType}" @click="onclick">
-		<view class="required" v-if="required"></view>
-		<view class="label">{{ label }}</view>
-		<view class="content">
-			<slot></slot>
+	<view :class="['m-form-item', { 'is-submit': hasButtonType, 'is-error': isError }]" @click="onClick">
+		<view class="m-form-item__required" v-if="required"></view>
+		<view class="m-form-item__label" :style="{ width: labelWidth + 'rpx' }">{{ label }}</view>
+		<view class="m-form-item__content" :style="{ textAlign }">
+			<slot />
 		</view>
-		<view class="arrow iconfont" v-if="arrow">&#xe642;</view>
+		<view class="m-form-item__arrow iconfont" v-if="arrow">&#xe642;</view>
 	</view>
 </template>
 
 <script>
 	export default {
 		name: 'm-form-item',
-		zhName: '表单控件',
+		zhName: '表单项',
 		props: {
-			name: {
-				type: String,
-				default: () => ''
-			},
-			label: {
-				type: String,
-				default: () => ''
-			},
-			labelWidth: {
-				type: Number,
-				default: () => 70
-			},
-			textAlign: {
-				type: String,
-				default: () => 'left'
-			},
-			arrow: {
-				type: Boolean,
-				default: () => false
-			},
+			name: { type: String, default: '' },
+			label: { type: String, default: '' },
+			labelWidth: { type: Number, default: 180 },
+			required: { type: Boolean, default: false },
+			// 校验规则：[{ required, message, pattern, validator }]
+			rules: { type: Array, default: () => [] },
+			disabled: { type: Boolean, default: false },
+			readonly: { type: Boolean, default: false },
+			arrow: { type: Boolean, default: false },
+			textAlign: { type: String, default: 'right' },
 		},
 		inject: {
-			formContext: {
-				default: undefined
-			}
+			formContext: { default: null }
 		},
 		provide() {
-			return {
-				formItemContext: this,
-			};
+			return { formItemContext: this }
 		},
 		data() {
 			return {
 				hasButtonType: false,
+				mValue: '',
+				isError: false,
 			}
 		},
+		mounted() {
+			if (this.formContext) this.formContext.register(this)
+		},
+		beforeUnmount() {
+			if (this.formContext) this.formContext.unregister(this.name)
+		},
 		methods: {
-			onclick(e) {
-				this.$emit('click',e);
+			// 子组件（m-input / m-picker 等）通过 formItemContext.setValue 回写值
+			setValue(v) {
+				this.mValue = v
+				this.isError = false
 			},
-			toJSON() {}
-		}
-	};
+			getValue() { return this.mValue },
+			reset() { this.mValue = ''; this.isError = false },
+			validate() {
+				let valid = true
+				let msg = ''
+				const empty = this._isEmpty(this.mValue)
+				if (this.required && empty) {
+					valid = false
+					msg = (this.label || this.name) + '不能为空'
+				} else if (!empty) {
+					for (const rule of this.rules) {
+						if (rule.required && this._isEmpty(this.mValue)) { valid = false; msg = rule.message || '必填'; break }
+						if (rule.pattern && !rule.pattern.test(this.mValue)) { valid = false; msg = rule.message || '格式不正确'; break }
+						if (rule.validator && !rule.validator(this.mValue)) { valid = false; msg = rule.message || '校验失败'; break }
+					}
+				}
+				this.isError = !valid
+				return { valid, msg }
+			},
+			_isEmpty(v) {
+				if (v === '' || v === null || v === undefined) return true
+				if (Array.isArray(v) && v.length === 0) return true
+				if (typeof v === 'object') return JSON.stringify(v) === '{}'
+				return false
+			},
+			onClick(e) { this.$emit('click', e) },
+		},
+	}
 </script>
 
 <style lang="scss" scoped>
-	.form-item {
+	.m-form-item {
 		position: relative;
 		width: 100%;
 		margin-top: 1px;
@@ -70,7 +91,7 @@
 		background-color: $white;
 		box-sizing: border-box;
 
-		.required {
+		&__required {
 			position: relative;
 			width: 24rpx;
 			height: 24rpx;
@@ -84,46 +105,43 @@
 			}
 		}
 
-		.arrow {
+		&__arrow {
 			margin-left: 10rpx;
 			color: #cdd5dc;
 			font-size: 26rpx;
 			transform: rotate(90deg);
 		}
 
-		.label {
+		&__label {
 			font-size: 28rpx;
+			color: $black;
 			box-sizing: border-box;
+			flex-shrink: 0;
 		}
 
-		.content {
+		&__content {
 			flex: 1;
 			margin-left: 20rpx;
+			min-width: 0;
 		}
 
-		&.btn-submit {
+		&.is-submit {
 			background: none;
-			.content {
+			.m-form-item__content {
 				padding: 110rpx 0;
 				box-sizing: border-box;
 			}
 		}
 
-		&.error {
+		&.is-error {
 			&::after {
 				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
+				top: 0; left: 0; right: 0; bottom: 0;
 				content: '';
 				border: 1px solid $red;
 				pointer-events: none;
 			}
-
-			.label {
-				color: $red;
-			}
+			.m-form-item__label { color: $red; }
 		}
 	}
 </style>

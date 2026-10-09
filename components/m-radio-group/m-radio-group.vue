@@ -11,7 +11,7 @@
 	export default {
 		name: "m-radio-group",
 		props: {
-			value: "",
+			value: { type: [String, Number], default: '' },
 			options: {
 				type: Array,
 				default: () => [],
@@ -26,6 +26,9 @@
 				radioContext: this,
 			};
 		},
+		inject: {
+			formItemContext: { default: null },
+		},
 		data() {
 			return {
 
@@ -33,6 +36,7 @@
 		},
 		methods: {
 			change(e) {
+				if (this.formItemContext) this.formItemContext.setValue(e)
 				this.$emit('update:value', e);
 				this.$emit('change', e);
 			},

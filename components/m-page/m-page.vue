@@ -1,29 +1,28 @@
 <template>
-	<scroll-view class="z-page" scroll-y>
+	<view class="m-page">
 		<slot />
-		<view class="_blank"></view>
-	</scroll-view>
+		<view class="m-page__safe"></view>
+	</view>
 </template>
 
 <script>
-export default {
-	name: 'm-page',
-	zhName: '容器'
-};
+	export default {
+		name: 'm-page',
+		zhName: '页面容器',
+	}
 </script>
 
 <style lang="scss" scoped>
-.z-page {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	flex-direction: column;
-	box-sizing: border-box;
-	overflow: hidden;
-	._blank {
+	/* 页面根容器：自动铺满并预留底部安全区，避免旧版的强制居中与空白 hack */
+	.m-page {
 		width: 100%;
-		height: 220rpx;
+		min-height: 100%;
+		box-sizing: border-box;
+		background-color: $pageBg;
+
+		.m-page__safe {
+			width: 100%;
+			height: env(safe-area-inset-bottom);
+		}
 	}
-}
 </style>

@@ -1,8 +1,8 @@
 <template>
 	<m-cascade-picker 
 		:url="url" 
-		:value.sync="mValue" 
-		:value-show.sync="mValueShow" 
+		v-model:value="mValue" 
+		v-model:valueShow="mValueShow" 
 		:data="data" 
 		:data-key="dataKey"
 		:data-value="dataValue"

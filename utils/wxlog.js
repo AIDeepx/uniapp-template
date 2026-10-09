@@ -1,29 +1,30 @@
-const log = wx.getRealtimeLogManager ? wx.getRealtimeLogManager() : null;
-const app = getApp();
-if (app && app.globalData) {
-  log.setFilterMsg(app.globalData.SDKVersion)
+/**
+ * 微信实时日志（仅在微信小程序端有效，其余端安全降级为空操作）
+ */
+let manager = null
+// #ifdef MP-WEIXIN
+try {
+  manager = wx.getRealtimeLogManager ? wx.getRealtimeLogManager() : null
+} catch (e) {
+  manager = null
 }
-module.exports = {
-  info() {
-    if (!log) return
-    log.info.apply(log, arguments)
+// #endif
+
+function safe(method, args) {
+  if (!manager || !manager[method]) return
+  manager[method].apply(manager, args)
+}
+
+export default {
+  info(...args) { safe('info', args) },
+  warn(...args) { safe('warn', args) },
+  error(...args) { safe('error', args) },
+  setFilterMsg(msg) {
+    if (!manager || !manager.setFilterMsg || typeof msg !== 'string') return
+    manager.setFilterMsg(msg)
   },
-  warn() {
-    if (!log) return
-    log.warn.apply(log, arguments)
+  addFilterMsg(msg) {
+    if (!manager || !manager.addFilterMsg || typeof msg !== 'string') return
+    manager.addFilterMsg(msg)
   },
-  error() {
-    if (!log) return
-    log.error.apply(log, arguments)
-  },
-  setFilterMsg(msg) { // 从基础库2.7.3开始支持
-    if (!log || !log.setFilterMsg) return
-    if (typeof msg !== 'string') return
-    log.setFilterMsg(msg)
-  },
-  addFilterMsg(msg) { // 从基础库2.8.1开始支持
-    if (!log || !log.addFilterMsg) return
-    if (typeof msg !== 'string') return
-    log.addFilterMsg(msg)
-  }
 }

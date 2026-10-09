@@ -7,7 +7,7 @@
 
 <script>
 	export default {
-		name: 'm-checkbox',
+		name: 'm-checkbox-group',
 		zhName: '多选框组',
 		props: {
 			value: {
@@ -19,10 +19,9 @@
 				default: () => [],
 			},
 			direction: {
-				type: 'left' | 'right',
+				type: String,
 				default: 'left',
 			}
-
 		},
 		data() {
 			return {
@@ -39,6 +38,9 @@
 			return {
 				checkboxGroupContext: this,
 			}
+		},
+		inject: {
+			formItemContext: { default: null },
 		},
 		mounted() {
 			this.setMValue(this.value);
@@ -83,6 +85,7 @@
 					}
 				}
 				this.mValue = mValue;
+				if (this.formItemContext) this.formItemContext.setValue(mValue)
 				this.$emit('update:value',mValue);
 				this.$emit('change', mValue);
 			},

@@ -1,0 +1,13 @@
+/* =========================================================================
+ * 主题入口
+ * 由 uni.scss 自动注入到所有组件的 <style lang="scss"> 中。
+ *
+ * 令牌体系（与 PC 端 melon-ui 对齐）：
+ *   styles/theme/palette.scss   L1 原始层，由 melon-ui tokens.json 生成（勿手改）
+ *   styles/theme/semantic.scss  L2 语义层 + 模板兼容变量名
+ *
+ * 换肤只需改 melon-ui 的 tokens.json 后执行：
+ *   node scripts/sync-theme.mjs
+ * ========================================================================= */
+
+@import './theme/semantic.scss';

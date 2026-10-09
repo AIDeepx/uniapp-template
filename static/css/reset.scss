@@ -1,17 +1,11 @@
-body {
+/**
+ * 基础重置与通用 mixin
+ * 主题色等令牌已统一在 styles/variables.scss 中定义（由 uni.scss 注入），
+ * 此处仅保留字体与布局 mixin，避免重复定义。
+ */
+page, body {
   font-family: -apple-system-font,BlinkMacSystemFont,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif,"Microsoft YaHei UI";
 }
-$pageBg: #f5f9fc;
-$black: #283036;
-$black5: #5b656d;
-$black9: #919aa1;
-$blue: #5192ff;
-$gray: rgba(232, 232, 232, 1);
-$red: #f55746;
-$orange: rgba(252, 109, 31, 1);
-$green: rgba(123, 239, 178, 1);
-$white: #ffffff;
-
 
 @mixin textoverflow {
 	overflow: hidden;

@@ -1,0 +1,155 @@
+import {
+	GetLocationOptions,
+	GetLocationSuccess,
+	ChooseLocationOptions,
+	OpenLocationOptions,
+	LocationConf
+} from "../interface.ts";
+import {
+	getConfig
+} from "../config.ts";
+import {
+	transformCoordinate
+} from "../map_utils.ts"
+import { 
+	getGeocode as tiandituGetGeocode, 
+	chooseLocation as tiandituChooseLocation,
+	openLocation as tiandituOpenLocation
+} from '../tianditu.ts';
+
+export function getLocation(options: GetLocationOptions) {
+	if (!options) {
+		console.warn("请设置options参数");
+		return;
+	}
+
+	const conf = getConfig();
+	
+	if (!conf) {
+		console.warn("请设置第三方地图Key，配置文件位于config.ts");
+		return;
+	}
+
+	// 判断是否为微信公众号
+	if (conf.jweixin) {
+		conf.jweixin.ready(() => {
+			conf.jweixin.getLocation({
+				type: options.type || 'wgs84',
+				...options,
+				success: (res: any) => {
+					console.log("微信公众号", res);
+					if (!options.geocode) {
+						options.success && options.success(res);
+						return;
+					}
+					_revGeocode(res as GetLocationSuccess, conf as LocationConf, options);
+				},
+				fail: (err: any) => {
+					console.error(err)
+				}
+			});
+		});
+		return;
+	}
+
+	console.log("getLocation", options)
+	// @ts-ignore
+	uni.getLocation({
+		type: "wgs84",
+		...options,
+		success: (res : any) => {
+			if (!options.geocode) {
+				options.success && options.success(res);
+				return;
+			}
+			_revGeocode(res as GetLocationSuccess, conf as LocationConf, options);
+		}
+	});
+}
+
+export function chooseLocation(options: ChooseLocationOptions) {
+	if (!options) {
+		console.warn("请设置options参数");
+		return;
+	}
+
+	const conf = getConfig();
+
+	if (!conf) {
+		console.warn("请设置第三方地图Key，配置文件位于config.ts");
+		return;
+	}
+
+	// 判断是否存在坐标，若没有则主动定位
+	if (!options.latitude || !options.longitude) {
+		uni.getLocation({
+			success: res => {
+				const tc = _transformCoordinate(res.longitude, res.latitude)
+				options.latitude = tc[1];
+				options.longitude = tc[0];
+				_chooseLocation(conf, options);
+			},
+			fail: err => {
+				options.fail && options.fail(err);
+			}
+		});
+		return;
+	}
+	_chooseLocation(conf, options);
+}
+
+export function openLocation(options: OpenLocationOptions) {
+	if (!options) {
+		console.warn("请设置options参数");
+		return;
+	}
+	
+	const conf = getConfig();
+	
+	if (!conf) {
+		console.warn("请设置第三方地图Key，配置文件位于config.ts");
+		return;
+	}
+	
+	switch (conf.map) {
+		case "tianditu":
+			tiandituOpenLocation(options, conf.key);
+			break;
+	}
+}
+
+function _chooseLocation(conf: LocationConf, options: ChooseLocationOptions) {
+	switch (conf.map) {
+		case "tianditu":
+			tiandituChooseLocation(options, conf.key);
+			break;
+	}
+}
+
+function _transformCoordinate(lng: number, lat: number, type?: string) {
+	const sourceType = type || 'wgs84';
+	let targetType = "wgs84";
+	let mapType = getConfig().map;
+	if (mapType == "baidu") {
+		targetType = 'bd09';
+	} else if (mapType == "amap" || mapType == "qqmap") {
+		targetType = 'gcj02';
+	}
+	if (sourceType == targetType) {
+		return [lng, lat];
+	}
+	return transformCoordinate[sourceType+"to"+targetType as keyof typeof transformCoordinate](lng, lat);
+}
+
+function _revGeocode(res: GetLocationSuccess, conf: LocationConf, options: GetLocationOptions) {
+	const tc = _transformCoordinate(res.longitude, res.latitude, options.type)
+	switch (conf.map) {
+		case "tianditu":
+			tiandituGetGeocode({...res, latitude: tc[1], longitude: tc[0]}, conf.key).then((result : GetLocationSuccess) => {
+				options.success && options.success(result);
+			}).catch((err : any) => {
+				options.fail && options.fail(err);
+			});
+			break;
+	}
+}
