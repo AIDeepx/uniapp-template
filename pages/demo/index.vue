@@ -3,11 +3,25 @@
 		<view class="demo">
 			<!-- ============ 顶部说明 ============ -->
 			<view class="hero">
-				<view class="hero__title">uniapp-template</view>
-				<view class="hero__desc">H5 / 钉钉小程序 / 微信小程序 · Vue 3 · day.js · melon-ui 令牌</view>
+				<view class="hero__deco hero__deco--1"></view>
+				<view class="hero__deco hero__deco--2"></view>
+				<view class="hero__badge">UNIAPP TEMPLATE</view>
+				<view class="hero__title">跨端初始化模板</view>
+				<view class="hero__desc">H5 · 钉钉小程序 · 微信小程序</view>
+				<view class="hero__tech">Vue 3 · day.js · melon-ui 主题令牌</view>
 				<view class="hero__meta">
-					<m-tag>组件 {{ componentCount }} 个</m-tag>
-					<m-tag>工具方法 {{ utilCount }} 项</m-tag>
+					<view class="hero__chip">
+						<text class="hero__chip-num">{{ componentCount }}</text>
+						<text class="hero__chip-label">组件</text>
+					</view>
+					<view class="hero__chip">
+						<text class="hero__chip-num">{{ utilCount }}</text>
+						<text class="hero__chip-label">工具方法</text>
+					</view>
+					<view class="hero__chip">
+						<text class="hero__chip-num">3</text>
+						<text class="hero__chip-label">端适配</text>
+					</view>
 				</view>
 			</view>
 
@@ -27,6 +41,10 @@
 			     1. 基础组件
 			     ============================================================ -->
 			<view v-if="group === 'basic'" class="sec">
+				<view class="sec__head">
+					<view class="sec__title">基础组件</view>
+					<view class="sec__sub">按钮 · 字段 · 标签 · 步骤 · 间距</view>
+				</view>
 				<!-- 按钮 -->
 				<view class="card">
 					<view class="card__title">m-button 按钮</view>
@@ -98,6 +116,10 @@
 			     2. 表单组件
 			     ============================================================ -->
 			<view v-if="group === 'form'" class="sec">
+				<view class="sec__head">
+					<view class="sec__title">表单组件</view>
+					<view class="sec__sub">校验 · 输入 · 选择器 · 单选多选</view>
+				</view>
 				<view class="card">
 					<view class="card__title">m-form 表单校验</view>
 					<view class="hint">支持 required 与 rules（pattern / validator / message）</view>
@@ -187,6 +209,10 @@
 			     3. 弹层与交互
 			     ============================================================ -->
 			<view v-if="group === 'overlay'" class="sec">
+				<view class="sec__head">
+					<view class="sec__title">弹层与交互</view>
+					<view class="sec__sub">弹层 · 标签页切换</view>
+				</view>
 				<view class="card">
 					<view class="card__title">m-popup 弹层</view>
 					<m-popup v-model="popupVisible">
@@ -230,6 +256,10 @@
 			     4. 数据展示
 			     ============================================================ -->
 			<view v-if="group === 'data'" class="sec">
+				<view class="sec__head">
+					<view class="sec__title">数据展示</view>
+					<view class="sec__sub">卡片 · 列表 · 筛选 · 列表页容器</view>
+				</view>
 				<view class="card">
 					<view class="card__title">m-card 卡片</view>
 					<m-card
@@ -249,6 +279,7 @@
 					<m-list
 						:value="listValue"
 						:data="listData"
+						:field-map="listFieldMap"
 						value-key="id"
 						checkbox-visible
 						@update:value="listValue = $event" />
@@ -295,6 +326,10 @@
 			     5. 业务组件
 			     ============================================================ -->
 			<view v-if="group === 'biz'" class="sec">
+				<view class="sec__head">
+					<view class="sec__title">业务组件</view>
+					<view class="sec__sub">级联选择 · 审批流 · 业务人员选择</view>
+				</view>
 				<view class="card">
 					<view class="card__title">m-cascade-picker 级联选择</view>
 					<view class="hint">未配置 url 时使用本地 data；配置后会请求接口按层级加载</view>
@@ -338,6 +373,10 @@
 			     6. 工具库 utils
 			     ============================================================ -->
 			<view v-if="group === 'utils'" class="sec">
+				<view class="sec__head">
+					<view class="sec__title">工具方法</view>
+					<view class="sec__sub">日期 · 缓存 · 令牌 · 配置 · 请求 · 日志 · 路由 · 上传</view>
+				</view>
 				<!-- 日期 -->
 				<view class="card">
 					<view class="card__title">日期 · day.js</view>
@@ -558,6 +597,8 @@
 				},
 				legacyFieldMap: { title: 'title', status: 'status', desc: { label: 'label', text: 'text' } },
 				listValue: [],
+				// m-list 未传 slot 时内部用 m-card 渲染，需告诉它标题字段，否则行内空白
+				listFieldMap: { title: 'name', status: 'status', desc: { label: 'label', text: 'text' } },
 				listData: [
 					{ id: 1, name: '张三', status: '已通过' },
 					{ id: 2, name: '李四', status: '待处理' },
@@ -620,23 +661,26 @@
 			}
 		},
 		computed: {
-			nowText() { return this.getFormate(this.now) },
+			nowText() { return this.util.getFormate(this.now) },
 			genderText() {
 				const hit = this.genderOptions.find((o) => o.value === this.model.gender)
 				return hit ? hit.text : ''
 			},
 		},
 		created() {
-			this.currentPath = this.getCurrentPath()
-			const c = this.cache.get('demo')
+			this.currentPath = this.util.getCurrentPath()
+			const c = this.util.cache.get('demo')
 			this.cacheText = c ? JSON.stringify(c) : ''
-			this.tokenText = this.getToken() || ''
+			this.tokenText = this.util.getToken() || ''
 		},
 		methods: {
 			/* ---------- 通用 ---------- */
-			log(title) {
+			getFormate(...args) {
+			return this.util.getFormate(...args)
+		},
+		log(title) {
 				uni.showToast({ title, icon: 'none' })
-				this.logger.debug('[demo]', title)
+				this.util.logger.debug('[demo]', title)
 			},
 
 			/* ---------- 表单 ---------- */
@@ -693,23 +737,23 @@
 
 			/* ---------- 缓存 ---------- */
 			onCacheSet() {
-				this.cache.set('demo', { n: Date.now() }, 60)
-				const v = this.cache.get('demo')
+				this.util.cache.set('demo', { n: Date.now() }, 60)
+				const v = this.util.cache.get('demo')
 				this.cacheText = v ? JSON.stringify(v) : ''
 				this.log('已写入缓存（60s 过期）')
 			},
 			onCacheGet() {
-				const v = this.cache.get('demo')
+				const v = this.util.cache.get('demo')
 				this.cacheText = v ? JSON.stringify(v) : ''
 				this.log(v ? '读取成功' : '缓存不存在或已过期')
 			},
 			onCacheDel() {
-				this.cache.del('demo')
+				this.util.cache.del('demo')
 				this.cacheText = ''
 				this.log('已删除')
 			},
 			onCacheClear() {
-				this.cache.clearAll()
+				this.util.cache.clearAll()
 				this.cacheText = ''
 				this.tokenText = ''
 				this.log('已清空全部缓存')
@@ -717,33 +761,33 @@
 
 			/* ---------- Token ---------- */
 			onTokenSet() {
-				this.setToken('demo-token-123')
-				this.tokenText = this.getToken()
+				this.util.setToken('demo-token-123')
+				this.tokenText = this.util.getToken()
 				this.log('token 已写入')
 			},
 			onTokenClear() {
-				this.clearToken()
+				this.util.clearToken()
 				this.tokenText = ''
 				this.log('token 已清除')
 			},
 			onGetUser() {
-				this.getUser()
+				this.util.getUser()
 					.then((u) => this.log('用户：' + (u ? JSON.stringify(u) : '未登录')))
 					.catch(() => this.log('获取用户失败'))
 			},
 			onGetCachedUser() {
-				const u = this.getCachedUser()
+				const u = this.util.getCachedUser()
 				this.cachedUserText = u ? JSON.stringify(u) : ''
 				this.log(u ? '已读取缓存用户' : '无缓存用户')
 			},
 			onSetUser() {
 				const u = { name: '张三', role: '管理员' }
-				this.setUser(u)
+				this.util.setUser(u)
 				this.cachedUserText = JSON.stringify(u)
 				this.log('已写入用户：' + JSON.stringify(u))
 			},
 			onClearUser() {
-				this.clearUser()
+				this.util.clearUser()
 				this.cachedUserText = ''
 				this.tokenText = ''
 				this.log('已清空用户与token')
@@ -753,7 +797,7 @@
 			onReqGet() {
 				this.reqMsg = 'GET 请求中…'
 				this.reqFail = false
-				this.get(this.api.demo.list, { id: 1 })
+				this.util.get(this.api.demo.list, { id: 1 })
 					.then((r) => { this.reqMsg = '成功：' + JSON.stringify(r) })
 					.catch((e) => {
 						this.reqFail = true
@@ -763,7 +807,7 @@
 			onReqPost() {
 				this.reqMsg = 'POST 请求中…'
 				this.reqFail = false
-				this.post(this.api.demo.detail, { id: 1 })
+				this.util.post(this.api.demo.detail, { id: 1 })
 					.then((r) => { this.reqMsg = '成功：' + JSON.stringify(r) })
 					.catch((e) => {
 						this.reqFail = true
@@ -781,18 +825,18 @@
 						this.reqFail = true
 						this.reqMsg = '失败（预期）：' + (e && e.msg ? e.msg : e)
 					},
-					complete: () => this.logger.info('回调 complete 已触发'),
+					complete: () => this.util.logger.info('回调 complete 已触发'),
 				})
 			},
 
 			/* ---------- 路由 ---------- */
 			onRefreshPath() {
-				this.currentPath = this.getCurrentPath()
+				this.currentPath = this.util.getCurrentPath()
 				this.log('当前路径：' + this.currentPath)
 			},
 			onSetPath() {
-				this.setCurrentPath('/pages/demo/index')
-				this.currentPath = this.getCurrentPath()
+				this.util.setCurrentPath('/pages/demo/index')
+				this.currentPath = this.util.getCurrentPath()
 				this.log('setCurrentPath → ' + this.currentPath)
 			},
 			onJump() {
@@ -801,14 +845,14 @@
 			},
 			onBack() {
 				this.log('back(delta=' + this.back + ')')
-				this.back(this.back)
+				this.util.back(this.back)
 			},
 			onRelogin() {
 				uni.showModal({
 					title: '重新登录',
 					content: '将调用 relogin()，H5 会跳转 OAuth 地址，确定继续？',
 					success: (res) => {
-						if (res.confirm) this.relogin()
+						if (res.confirm) this.util.relogin()
 					},
 				})
 			},
@@ -817,68 +861,183 @@
 </script>
 
 <style lang="scss" scoped>
+	/* =====================================================================
+	 * 组件 Demo 页视觉
+	 * 设计语言：品牌渐变头图 + 浮动胶囊导航 + 浮层卡片 + 令牌驱动
+	 * 三端约束：仅用 SCSS 令牌 / 渐变 / 阴影；不使用 CSS 变量与
+	 *           backdrop-filter（小程序不支持）；sticky 仅 H5 生效。
+	 * ===================================================================== */
+	$demo-shadow:    0 6rpx 20rpx rgba(40, 48, 54, 0.06);
+	$demo-shadow-lg: 0 10rpx 30rpx rgba(59, 112, 219, 0.18);
+
 	.demo {
-		padding-bottom: calc(60rpx + env(safe-area-inset-bottom));
+		padding-bottom: calc(80rpx + env(safe-area-inset-bottom));
 	}
 
-	/* ---------- Hero ---------- */
+	/* ---------- 头图 ---------- */
 	.hero {
-		padding: 40rpx 32rpx 24rpx;
-		background-color: $white;
+		position: relative;
+		overflow: hidden;
+		padding: 48rpx 40rpx 100rpx;
+		background-color: $blue-600;
+		background-image: linear-gradient(180deg, $blue-600 0%, $blue-600 18%, $blue-500 62%, $purple-500 100%);
+
+		&__deco {
+			position: absolute;
+			border-radius: 50%;
+			&--1 {
+				top: -160rpx;
+				right: -100rpx;
+				width: 360rpx;
+				height: 360rpx;
+				background-color: rgba(255, 255, 255, 0.14);
+			}
+			&--2 {
+				bottom: -120rpx;
+				left: -60rpx;
+				width: 240rpx;
+				height: 240rpx;
+				background-color: rgba(255, 255, 255, 0.10);
+			}
+		}
+
+		&__badge {
+			display: inline-block;
+			padding: 6rpx 20rpx;
+			border-radius: 100rpx;
+			border: 1rpx solid rgba(255, 255, 255, 0.36);
+			background-color: rgba(255, 255, 255, 0.18);
+			font-size: 20rpx;
+			letter-spacing: 3rpx;
+			color: $white;
+		}
 		&__title {
-			font-size: 40rpx;
-			font-weight: bold;
-			color: $black;
+			margin-top: 24rpx;
+			font-size: 48rpx;
+			font-weight: 700;
+			letter-spacing: 1rpx;
+			color: $white;
 		}
 		&__desc {
-			margin-top: 10rpx;
-			font-size: 24rpx;
-			color: $black9;
+			margin-top: 14rpx;
+			font-size: 26rpx;
+			color: rgba(255, 255, 255, 0.90);
+		}
+		&__tech {
+			margin-top: 8rpx;
+			font-size: 22rpx;
+			color: rgba(255, 255, 255, 0.66);
 		}
 		&__meta {
-			margin-top: 20rpx;
 			display: flex;
-			.m-tag { margin-right: 16rpx; }
+			flex-wrap: wrap;
+			margin-top: 32rpx;
+		}
+		&__chip {
+			display: flex;
+			align-items: center;
+			margin: 0 16rpx 12rpx 0;
+			padding: 10rpx 24rpx;
+			border-radius: 100rpx;
+			border: 1rpx solid rgba(255, 255, 255, 0.26);
+			background-color: rgba(255, 255, 255, 0.16);
+		}
+		&__chip-num {
+			font-size: 30rpx;
+			font-weight: 700;
+			color: $white;
+		}
+		&__chip-label {
+			margin-left: 8rpx;
+			font-size: 22rpx;
+			color: rgba(255, 255, 255, 0.82);
 		}
 	}
 
-	/* ---------- 分组导航 ---------- */
+	/* ---------- 分组导航（浮于头图之上的胶囊） ---------- */
 	.nav {
+		position: relative;
+		z-index: 2;
 		display: flex;
-		flex-wrap: wrap;
-		padding: 0 16rpx;
+		margin: -68rpx 24rpx 0;
+		padding: 10rpx;
+		border-radius: 100rpx;
 		background-color: $white;
-		border-bottom: 1px solid $pageBg;
+		box-shadow: $demo-shadow-lg;
+
+		/* #ifdef H5 */
+		position: sticky;
+		top: 44px;
+		/* #endif */
 
 		&__item {
 			flex: 1;
-			min-width: 100rpx;
-			height: 80rpx;
-			line-height: 80rpx;
+			height: 64rpx;
+			line-height: 64rpx;
+			border-radius: 100rpx;
 			text-align: center;
 			font-size: 26rpx;
 			color: $black5;
+			transition: color 0.2s, background-color 0.2s;
+
 			&.is-active {
-				color: $blue;
-				font-weight: bold;
+				font-weight: 600;
+				color: $white;
+				background-color: $blue-500;
+				background-image: linear-gradient(135deg, $blue-500, $purple-500);
+				box-shadow: 0 4rpx 14rpx rgba(81, 146, 255, 0.36);
 			}
 		}
 	}
 
+	/* ---------- 分组标题 ---------- */
+	.sec {
+		padding: 40rpx 24rpx 0;
+
+		&__head {
+			display: flex;
+			align-items: baseline;
+			margin: 0 8rpx 24rpx;
+		}
+		&__title {
+			font-size: 32rpx;
+			font-weight: 700;
+			color: $black;
+		}
+		&__sub {
+			margin-left: 16rpx;
+			font-size: 22rpx;
+			color: $black9;
+		}
+	}
+
 	/* ---------- 卡片 ---------- */
-	.sec { padding: 24rpx 24rpx 0; }
 	.card {
-		margin-bottom: 24rpx;
-		padding: 28rpx 32rpx;
+		margin-bottom: 26rpx;
+		padding: 30rpx 32rpx;
+		border-radius: 24rpx;
 		background-color: $white;
-		border-radius: $radius-md;
+		box-shadow: $demo-shadow;
 		box-sizing: border-box;
 
 		&__title {
-			margin-bottom: 20rpx;
+			display: flex;
+			align-items: center;
+			margin-bottom: 24rpx;
 			font-size: 30rpx;
-			font-weight: bold;
+			font-weight: 700;
+			line-height: 42rpx;
 			color: $black;
+
+			&::before {
+				content: '';
+				flex-shrink: 0;
+				width: 8rpx;
+				height: 30rpx;
+				margin-right: 16rpx;
+				border-radius: 4rpx;
+				background-image: linear-gradient(180deg, $blue-400, $purple-500);
+			}
 		}
 	}
 
@@ -886,67 +1045,108 @@
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		margin-bottom: 20rpx;
+		margin-bottom: 8rpx;
 		> view { margin: 0 16rpx 16rpx 0; }
 	}
-	.hint {
-		margin-top: 12rpx;
-		font-size: 22rpx;
-		color: $black9;
-		line-height: 34rpx;
-	}
-	.field-val { font-size: 28rpx; color: $black5; }
-	.step-body { padding: 20rpx 0; font-size: 26rpx; color: $black5; text-align: center; }
-	.tabs-body { padding: 24rpx 0; font-size: 26rpx; color: $black5; }
 
-	/* 键值展示 */
+	/* ---------- 说明气泡 ---------- */
+	.hint {
+		margin-top: 16rpx;
+		padding: 16rpx 22rpx;
+		border-radius: 12rpx;
+		border-left: 6rpx solid $blue-200;
+		background-color: $blue-50;
+		font-size: 22rpx;
+		line-height: 36rpx;
+		color: $gray-400;
+		box-sizing: border-box;
+	}
+
+	.field-val { font-size: 28rpx; color: $black5; }
+
+	.step-body {
+		margin: 8rpx 0 24rpx;
+		padding: 22rpx 24rpx;
+		border-radius: 12rpx;
+		background-color: $bg-base;
+		font-size: 26rpx;
+		color: $black5;
+		text-align: center;
+	}
+
+	.tabs-body {
+		padding: 24rpx 0 4rpx;
+		font-size: 26rpx;
+		color: $black5;
+	}
+
+	/* ---------- 键值展示 ---------- */
 	.kv {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 14rpx 0;
+		padding: 18rpx 0;
 		font-size: 26rpx;
-		border-bottom: 1px dashed $pageBg;
-		&__k { color: $black5; flex-shrink: 0; }
+		& + & { border-top: 2rpx solid $divider-color; }
+
+		&__k { flex-shrink: 0; color: $black5; }
 		&__v {
 			margin-left: 24rpx;
+			font-weight: 500;
 			color: $black;
 			word-break: break-all;
 			text-align: right;
 		}
 	}
 
-	/* 结果提示 */
+	/* ---------- 结果提示 ---------- */
 	.result {
 		margin-top: 20rpx;
 		padding: 20rpx 24rpx;
-		border-radius: $radius-sm;
-		background-color: $white;
-		border: 1px solid $green;
+		border-radius: 12rpx;
+		border: 2rpx solid rgba(22, 199, 151, 0.32);
+		background-color: $green-50;
 		font-size: 24rpx;
-		color: $green;
-		box-sizing: border-box;
+		line-height: 36rpx;
+		color: $green-600;
 		word-break: break-all;
-		&.is-error { border-color: $red; color: $red; }
+		box-sizing: border-box;
+
+		&.is-error {
+			border-color: rgba(232, 56, 56, 0.32);
+			background-color: $red-50;
+			color: $red-600;
+		}
 	}
 
-	/* 弹层内容 */
-	.popup-body { font-size: 28rpx; color: $black5; line-height: 44rpx; }
+	/* ---------- 弹层内容 ---------- */
+	.popup-body {
+		font-size: 28rpx;
+		line-height: 44rpx;
+		color: $black5;
+	}
 	.popup-head {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		font-size: 30rpx;
+		font-weight: 600;
 		color: $black;
-		&__close { color: $blue; }
+
+		&__close {
+			font-size: 26rpx;
+			font-weight: 400;
+			color: $blue;
+		}
 	}
 
-	/* 自定义列表行 */
+	/* ---------- 自定义列表行 ---------- */
 	.custom-row {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 30rpx 0;
+		padding: 26rpx 0;
+
 		&__name { font-size: 30rpx; color: $black; }
 	}
 </style>

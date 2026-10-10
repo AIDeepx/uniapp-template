@@ -1,41 +1,43 @@
 {
-    "name": "uniapp-template",
-    "appid": "",
-    "description": "uniapp 通用 UI 组件与工具库初始化模板（H5 / 钉钉小程序 / 微信小程序）",
-    "versionName": "1.0.0",
-    "versionCode": "100",
-    "transformPx": false,
-    "h5": {
-        "title": "uniapp-template",
-        "domain": "",
-        "router": {
-            "mode": "hash",
-            "base": "./"
+    "name" : "uniapp-template",
+    "appid" : "__UNI__02B73D0",
+    "description" : "uniapp 通用 UI 组件与工具库初始化模板（H5 / 钉钉小程序 / 微信小程序）",
+    "versionName" : "1.0.0",
+    "versionCode" : "100",
+    "transformPx" : false,
+    "h5" : {
+        "title" : "uniapp-template",
+        "domain" : "",
+        "router" : {
+            "mode" : "hash",
+            "base" : "./"
         },
-        "devServer": {
-            "port": 8080,
-            "https": false
-        }
-    },
-    "mp-weixin": {
-        "appid": "",
-        "setting": {
-            "urlCheck": false,
-            "es6": true,
-            "minified": true
+        "devServer" : {
+            "port" : 8080,
+            "https" : false
         },
-        "usingComponents": true
+        "template" : "index.html"
     },
-    "mp-dingtalk": {
-        "appid": "",
-        "setting": {
-            "urlCheck": false,
-            "es6": true,
-            "minified": true
+    "mp-weixin" : {
+        "appid" : "",
+        "setting" : {
+            "urlCheck" : false,
+            "es6" : true,
+            "minified" : true
         },
-        "usingComponents": true
+        "usingComponents" : true
     },
-    "uniStatistics": {
-        "enable": false
-    }
+    "mp-dingtalk" : {
+        "appid" : "",
+        "setting" : {
+            "urlCheck" : false,
+            "es6" : true,
+            "minified" : true
+        },
+        "usingComponents" : true
+    },
+    "uniStatistics" : {
+        "enable" : false
+    },
+    "vueVersion" : "3"
 }

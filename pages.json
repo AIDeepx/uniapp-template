@@ -11,6 +11,8 @@
 			"path": "pages/demo/index",
 			"style": {
 				"navigationBarTitleText": "组件 Demo",
+				"navigationBarBackgroundColor": "#3B70DB",
+				"navigationBarTextStyle": "white",
 				"enablePullDownRefresh": false
 			}
 		}

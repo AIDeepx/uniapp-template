@@ -226,4 +226,31 @@ node scripts/verify-demo.cjs        # demo 是否覆盖全部组件与 utils 方
 
 ## 启动
 
-用 HBuilderX 或 CLI 以 **Vue 3 模式**打开本目录（HBuilderX：右键项目根目录 → “将项目转为 Vue3”，或在创建时选择 Vue3），再选择运行端（浏览器 / 微信开发者工具 / 钉钉开发者工具）预览 `pages/demo/index` 演示页。
+本项目是 **HBuilderX 工程**（无 `package.json` / `vite.config.js`），但**已按 Vue 3 模式适配并验证**，根目录保留了 Vue 3 所需的 `index.html`。
+
+在 HBuilderX 中打开本目录，选择 **Vue 3 运行配置**（运行 → 运行到浏览器 / 微信 / 钉钉），即可预览 `pages/demo/index` 演示页。
+
+### 命令行验证三端编译
+
+本机装有 HBuilderX 时，可直接用其 CLI 验证三端能否编译通过（`--compile true` 表示只编译、不启动浏览器）：
+
+```bash
+cd /d/HBuilderX        # 换成你的 HBuilderX 安装路径
+
+./cli.exe launch web       --project "F:/UniApp/uniapp-template" --compile true --continue-on-error true
+./cli.exe launch mp-weixin --project "F:/UniApp/uniapp-template" --compile true --continue-on-error true
+./cli.exe launch mp-lark   --project "F:/UniApp/uniapp-template" --compile true --continue-on-error true
+```
+
+三端当前均为「编译成功」状态。
+
+> **改动跨端相关代码后请务必跑一次上面的编译**。静态检查（grep 残留 API、SCSS 编译）发现不了 ESM/UMD 互操作、模块导出形态、条件编译裁剪这类问题——这些只有真实编译器才能暴露。
+
+### Vue 3 工程结构注意事项
+
+| 文件 | 注意事项 |
+| --- | --- |
+| `index.html` | Vue 3 模式**必需**（vue2 模式不需要），采用 Vue3 + Vite 标准写法 |
+| `main.js` | 必须导出名为 `createApp` 的函数；Vue 工厂函数必须用 `createSSRApp` 导入（**不能**用 `createApp`，否则 HBuilderX 的 mainJs 插件会用 `code.replace('createApp','createVueApp')` 抢占替换位，导致插件注入的 `function createApp` 与导出的 createApp 撞名，浏览器报 `Identifier 'createApp' has already been declared`）|
+| `utils/index.js` | 用 ESM 具名导出 + `export default` 双出，不能用 `module.exports`；避免对象展开 `...` |
+| 引入 UMD 库 | 用 `require()`（如 `lib/day.min.js`），ESM 的 `import * as` / `import from` 在小程序端会报无 default 导出 |
