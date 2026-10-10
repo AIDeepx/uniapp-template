@@ -1,24 +1,40 @@
 /**
  * 日期工具 —— 基于 day.js (lib/day.min.js)
  *
- * 设计说明：
- *   lib/day.min.js 是 UMD 打包产物，在小程序端没有 CommonJS 也没有 default 导出，
- *   直接 `import dayjs from` 会得到 undefined。故这里用 interop 兼容三种引入形态：
- *     H5 /打包器(CommonJS) → m.default
- *     小程序(挂全局)      → globalThis.dayjs
- *     兜底                → m 本身
- *   保证三端（H5 / 微信小程序 / 钉钉小程序）都能拿到工厂函数。
+ * 关于引入方式（踩坑记录，重要）：
+ *   lib/day.min.js 是 UMD 产物，H5（浏览器 / Vite ESM）与小程序（CJS）的
+ *   引入机制完全相反，必须条件编译区分，否则任一端运行时会报错：
+ *     - H5：浏览器里没有 `require`（`require is not defined`）；且 Vite 把
+ *           项目源码目录下的 .js 当原生 ESM，不给 UMD 合成 default 导出，写
+ *           `import dayjs from` 会报 "does not provide an export named
+ *           'default'"。故改用语效导入 `import '@/lib/day.min.js'`，UMD 加载
+ *           时把 dayjs 挂到 globalThis，再从全局取工厂函数。
+ *     - 小程序：是 CJS 运行时，UMD 的 module.exports 直接给出 dayjs 工厂函数，
+ *           用 `require('@/lib/day.min.js')` 即可。
+ *   故用 `#ifdef H5` / `#ifndef H5` 分别走 全局副作用导入 与 require 两条路径。
  *
  * 本模块替代了旧的 utils/date.js（已废弃），API 保持同名，
  * 因此 utils/index.js 的导出与业务调用方式均无需改动。
  */
-import * as dayjsModule from '@/lib/day.min.js'
 
-/* interop：兼容 UMD 在不同运行端的暴露形态 */
+// #ifdef H5
+// Vite 把项目源码目录（非 node_modules）下的 .js 当作原生 ESM，不会给 UMD
+// 合成 default 导出，写 `import dayjs from` 会报
+// "does not provide an export named 'default'"。
+// 故改用语效导入：UMD 加载时把 dayjs 挂到 globalThis，再从全局取工厂函数。
+import '@/lib/day.min.js'
+const dayjs = globalThis.dayjs
+// #endif
+
+// #ifndef H5
+// 小程序是 CJS 运行时，UMD 的 module.exports 直接给出 dayjs 工厂函数
+const dayjsModule = require('@/lib/day.min.js')
 const dayjs =
+  (typeof dayjsModule === 'function' && dayjsModule) ||
   (dayjsModule && (dayjsModule.default || dayjsModule.dayjs)) ||
   (typeof globalThis !== 'undefined' && globalThis.dayjs) ||
   dayjsModule
+// #endif
 
 /**
  * 常用格式预设
