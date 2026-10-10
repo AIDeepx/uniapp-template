@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+# 提交前自动跑设计系统卡口，任一 verify 失败则阻断提交
+npm run verify

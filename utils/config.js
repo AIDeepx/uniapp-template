@@ -11,6 +11,11 @@ let PLATFORM = 'h5'
 // #ifdef MP-WEIXIN
 PLATFORM = 'mp-weixin'
 // #endif
+// 钉钉小程序：本项目不单独定义自定义平台，直接复用支付宝 mp-alipay 命令编译，
+// 因此钉钉运行时的编译宏是 MP-ALIPAY（MP-DINGTALK 只是 manifest 配置名，不会注入编译宏）。
+// #ifdef MP-ALIPAY
+PLATFORM = 'mp-dingtalk'
+// #endif
 // #ifdef MP-DINGTALK
 PLATFORM = 'mp-dingtalk'
 // #endif

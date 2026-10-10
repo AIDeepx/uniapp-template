@@ -2,7 +2,7 @@
 
 通用 uniapp 初始化模板，沉淀自多个真实项目，内置一套**跨端通用的 UI 组件**与**工具库**。
 
-> 适配目标：**H5、钉钉小程序（mp-dingtalk）、微信小程序（mp-weixin）**，**不涉及 APP / 其他小程序端**。
+> 适配目标：**H5、钉钉小程序（复用 mp-alipay 编译）、微信小程序（mp-weixin）**，**不涉及 APP / 其他小程序端**。
 
 ---
 
@@ -103,7 +103,7 @@ this.util.FORMAT.DATETIME  // 'YYYY-MM-DD HH:mm:ss'
 
 `utils/config.js` 通过编译期变量自动识别平台并设置 `AUTH_TYPE`：
 
-- 钉钉小程序：`dd.getAuthCode` → 后端换 token（`#ifdef MP-DINGTALK` 保护）
+- 钉钉小程序：`dd.getAuthCode` → 后端换 token（编译宏为 `#ifdef MP-ALIPAY`——钉钉直接复用支付宝编译，故不是 `MP-DINGTALK`）
 - 微信小程序：`wx.login` → 后端换 token
 - H5：后端以 cookie / 重定向 OAuth 维持会话
 
@@ -188,7 +188,7 @@ PC 端 `14px` 字号 → 移动端 `28rpx`；`4px` 圆角 → `8rpx`。
 
 ```bash
 node scripts/verify-theme.cjs       # 校验令牌链解析结果
-node scripts/verify-components.cjs  # 校验 31 个组件样式全部编译通过
+node scripts/verify-components.cjs  # 校验 32 个组件样式块全部编译通过
 ```
 
 ## 校验脚本
@@ -197,7 +197,7 @@ node scripts/verify-components.cjs  # 校验 31 个组件样式全部编译通�
 
 ```bash
 node scripts/verify-theme.cjs       # 令牌链解析结果（颜色/rpx 换算断言）
-node scripts/verify-components.cjs  # 31 个组件样式全部编译通过
+node scripts/verify-components.cjs  # 32 个组件样式块全部编译通过
 node scripts/verify-date.cjs        # 日期工具单元测试（29 项）
 node scripts/verify-demo.cjs        # demo 是否覆盖全部组件与 utils 方法
 ```
@@ -239,10 +239,12 @@ cd /d/HBuilderX        # 换成你的 HBuilderX 安装路径
 
 ./cli.exe launch web       --project "F:/UniApp/uniapp-template" --compile true --continue-on-error true
 ./cli.exe launch mp-weixin --project "F:/UniApp/uniapp-template" --compile true --continue-on-error true
-./cli.exe launch mp-lark   --project "F:/UniApp/uniapp-template" --compile true --continue-on-error true
+# 钉钉小程序：uni-app 无独立 mp-dingtalk 命令，直接复用支付宝 mp-alipay 编译
+# （产物在「支付宝开发者工具」切到「钉钉小程序」类型预览）
+./cli.exe launch mp-alipay  --project "F:/UniApp/uniapp-template" --compile true --continue-on-error true
 ```
 
-三端当前均为「编译成功」状态。
+H5 与微信小程序已在本机 HBuilderX CLI 验证「编译成功」；钉钉（复用 mp-alipay）需在装有支付宝/钉钉模块的 HBuilderX 环境复验。
 
 > **改动跨端相关代码后请务必跑一次上面的编译**。静态检查（grep 残留 API、SCSS 编译）发现不了 ESM/UMD 互操作、模块导出形态、条件编译裁剪这类问题——这些只有真实编译器才能暴露。
 

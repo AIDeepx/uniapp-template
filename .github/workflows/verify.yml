@@ -1,0 +1,32 @@
+name: verify
+
+on:
+  push:
+    branches: [main, master, dev]
+  pull_request:
+
+jobs:
+  design-system:
+    name: 设计系统卡口（verify 脚本）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 安装工具依赖
+        run: npm install
+      - name: 运行设计系统校验（规范 / 组件 / 令牌 / 日期 / demo）
+        run: npm run verify
+
+  lint:
+    name: 代码风格（eslint，仅供参考暂不阻塞）
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm run lint

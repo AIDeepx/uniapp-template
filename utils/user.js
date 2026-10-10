@@ -56,7 +56,8 @@ async function login() {
 
 function loginByDingtalk() {
   return new Promise((resolve, reject) => {
-    // #ifdef MP-DINGTALK
+    // 钉钉小程序复用支付宝 mp-alipay 编译，运行时编译宏为 MP-ALIPAY（非 MP-DINGTALK）
+    // #ifdef MP-ALIPAY
     dd.getAuthCode({
       success: async (res) => {
         try {
@@ -70,7 +71,7 @@ function loginByDingtalk() {
       },
     })
     // #endif
-    // #ifndef MP-DINGTALK
+    // #ifndef MP-ALIPAY
     resolve(false)
     // #endif
   })
