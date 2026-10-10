@@ -45,20 +45,22 @@ for (const f of pageFiles) {
 	const tagRe = /<uni-[\w-]+/g;
 	const m = src.match(tagRe);
 	if (m) fail('R1', f, `出现官方组件标签 ${[...new Set(m)].join(', ')}，请封装为 m-* 薄壳后使用`);
-	if (/from\s+['"].*uni_modules/.test(src))
+	if (/from\s+['"][^'"]*uni_modules/.test(src))
 		fail('R1', f, '业务页面禁止 import uni_modules 下的组件/工具');
+	if (/@import\s+[^;]*uni_modules/.test(src))
+		fail('R1', f, '业务页面禁止 @import uni_modules 下的样式（含 uni-scss），一律走 semantic.scss 令牌');
 }
 ok(`${pageFiles.length} 个业务页面检查完毕`);
 
 /* ---------- R1b: uni-* 只允许出现在白名单薄壳内 ---------- */
 console.log('R1b uni-* 组件只允许在白名单薄壳内使用');
 const compFiles = walk(path.join(ROOT, 'components'), '.vue');
-for (const f of compFiles) {
+	for (const f of compFiles) {
 	const rel = path.relative(ROOT, f).replace(/\\/g, '/');
 	const src = fs.readFileSync(f, 'utf8');
-	const usesUni = /<uni-[\w-]+|from\s+['"].*uni_modules/.test(src);
+	const usesUni = /<uni-[\w-]+|from\s+['"][^'"]*uni_modules|@import\s+[^;]*uni_modules/.test(src);
 	if (usesUni && !ALLOWED_UNI_WRAPPERS.includes(rel))
-		fail('R1b', f, '引用了官方 uni-* 组件，但不在薄壳白名单内（需评审后加入 ALLOWED_UNI_WRAPPERS）');
+		fail('R1b', f, '引用了官方 uni-* 组件或 @import 官方样式，但不在薄壳白名单内（需评审后加入 ALLOWED_UNI_WRAPPERS）');
 }
 ok(`薄壳白名单：${ALLOWED_UNI_WRAPPERS.length} 个`);
 
