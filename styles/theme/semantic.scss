@@ -105,6 +105,14 @@ $z-toast:  2000;
 $safe-bottom: env(safe-area-inset-bottom);
 $safe-top:    env(safe-area-inset-top);
 
+/* ---------- 表单组件（设计令牌对齐 Figma） ---------- */
+$form-row-min-height: 108rpx;   // 54px → rpx，舒适触控高度
+$form-label-size:     28rpx;    // 行标签
+$form-value-size:     30rpx;    // 行取值
+$form-card-radius:    $radius-lg;   // 分组圆角 16rpx
+$form-card-bg:        $white;
+$form-divider:        $divider-color; // 行分割线
+
 /* ---------- 深色主题（可选，默认关闭） ---------- */
 /* 需深色时取消下面一行的注释（放在文件最后，确保覆盖上面所有变量） */
 // @import './theme-dark.scss';
