@@ -30,7 +30,7 @@
 </script>
 
 <style lang="scss" scoped>
-	$defaultColor: #acbcd2;
+	$defaultColor: $gray-300;
 
 	.step {
 		.step-wrapper {
@@ -55,7 +55,7 @@
 						width: calc(100% - 80rpx);
 						height: 2px;
 						z-index: -1;
-						background-color: #ccd7e9;
+						background-color: $gray-200;
 					}
 
 					.iconfont {

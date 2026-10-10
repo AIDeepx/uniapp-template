@@ -83,11 +83,18 @@ export default {
 			}
 		},
 		getList() {
+			// 未配置接口地址时直接置空：否则 api.apply 为 undefined 会在 showLoading
+			// 之后同步抛错，Promise 链建立失败导致 hideLoading 永不执行、遮罩永久卡住
+			const url = this.api && this.api.apply && this.api.apply.SpeakerPersonsList;
+			if (!url) {
+				this.list = [];
+				return;
+			}
 			uni.showLoading({
 				title: '加载中...'
 			})
 			this.http
-				.get(this.api.apply.SpeakerPersonsList, {
+				.get(url, {
 					params: {
 						q: this.mSearch
 					}
@@ -97,6 +104,7 @@ export default {
 						this.list = res.list;
 					}
 				})
+				.catch(() => {})
 				.finally(() => {
 					uni.hideLoading();
 				});
@@ -157,7 +165,7 @@ export default {
 			height: 66rpx;
 			line-height: 66rpx;
 			padding: 0 32rpx 0 60rpx;
-			border: 1px solid #c0c0c0;
+			border: 1px solid $border-color-base;
 			box-sizing: border-box;
 			border-radius: 16rpx;
 			font-size: 28rpx;
@@ -191,7 +199,7 @@ export default {
 		align-items: center;
 		justify-content: space-between;
 		box-sizing: border-box;
-		background-color: #fff;
+		background-color: $white;
 		.left-text, .right-text {
 			font-size: 26rpx;
 			color: $blue;

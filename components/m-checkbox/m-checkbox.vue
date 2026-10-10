@@ -3,11 +3,11 @@
 		checkbox: true,
 		'first-child': isFirstChild
 	}" @click.stop="doCheck">
-		<view class="iconfont" v-if="direction=='left'">{{ mChecked?'&#xe66d;':'&#xe64d;' }}</view>
+		<view class="iconfont" :class="{ 'is-checked': mChecked }" v-if="direction=='left'">{{ mChecked?'&#xe66d;':'&#xe64d;' }}</view>
 		<view class="text">
 			<slot />
 		</view>
-		<view class="iconfont right" v-if="direction=='right'">{{ mChecked?'&#xe66d;':'&#xe64d;' }}</view>
+		<view class="iconfont right" :class="{ 'is-checked': mChecked }" v-if="direction=='right'">{{ mChecked?'&#xe66d;':'&#xe64d;' }}</view>
 	</view>
 </template>
 
@@ -74,8 +74,12 @@
 
 		.iconfont {
 			font-size: 36rpx;
-			color: $blue;
+			color: $gray-300;
 			margin-right: 10rpx;
+
+			&.is-checked {
+				color: $color-brand;
+			}
 
 			&.right {
 				margin-right: auto;
@@ -84,7 +88,7 @@
 		}
 
 		.text {
-			color: $black5;
+			color: $text-color-primary;
 			font-size: 26rpx;
 		}
 	}

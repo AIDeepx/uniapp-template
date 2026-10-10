@@ -3,6 +3,7 @@
 		<text :class="{
 			'z-radio-icon': true,
 			'iconfont': true,
+			'is-checked': isChecked,
 			'disabled': disabled,
 		}">{{isChecked ? '&#xe686;' : '&#xe63b;'}}</text>
 		<text class="z-radio-text">
@@ -52,18 +53,22 @@
 		vertical-align: middle;
 		.z-radio-icon {
 			display: inline-block;
-			color: $blue;
-			font-size: 30rpx;
-			line-height: 30rpx;
+			color: $gray-300;
+			font-size: 32rpx;
+			line-height: 32rpx;
+			&.is-checked {
+				color: $color-brand;
+			}
 			&.disabled {
-				color: $black9;
+				color: $text-color-disabled;
 			}
 		}
 		.z-radio-text {
 			display: inline-block;
-			margin-left: 6rpx;
+			margin-left: 8rpx;
 			font-size: 28rpx;
 			line-height: 28rpx;
+			color: $text-color-primary;
 		}
 	}
 </style>

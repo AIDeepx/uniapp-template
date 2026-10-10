@@ -11,9 +11,10 @@
 			:placeholder="placeholder"
 			:disabled="mDisabled"
 			:maxlength="maxlength"
-			placeholder-style="font-size:28rpx;color:#AEB8C0;"
+			placeholder-class="m-textarea__placeholder"
 			@input="onInput"
 			auto-height />
+		<view class="m-textarea__counter" v-if="maxlength > 0">{{ (mValue ? mValue.length : 0) }}/{{ maxlength }}</view>
 		<view class="m-textarea__readonly" v-if="mReadonly"></view>
 	</view>
 </template>
@@ -65,37 +66,38 @@
 		background-color: $white;
 		overflow: hidden;
 
-		&::before,
-		&::after {
-			position: absolute;
-			top: 0; left: 0;
-			width: 100%; height: 1px;
-			content: '';
-			background-color: $pageBg;
-		}
-		&::after { top: auto; bottom: 0; }
-
 		&__title {
-			height: 100rpx;
-			line-height: 100rpx;
-			font-size: 28rpx;
+			display: flex;
+			align-items: center;
+			min-height: 100rpx;
 			padding: 0 32rpx;
 			box-sizing: border-box;
+			font-size: $form-label-size;
+			color: $text-color-secondary;
 		}
 		&__required {
-			margin-right: 10rpx;
-			color: $orange;
-			font-size: 36rpx;
+			margin-right: 8rpx;
+			color: $color-error;
+			font-size: 28rpx;
+			line-height: 1;
 		}
-		&__desc { color: #aeb8c0; margin-left: 12rpx; }
+		&__desc { color: $text-color-tertiary; margin-left: 12rpx; font-size: 24rpx; }
 
 		&__control {
 			width: 100%;
 			box-sizing: border-box;
-			padding: 0 32rpx 30rpx;
+			padding: 8rpx 32rpx 16rpx;
+			min-height: 120rpx;
 			font-size: 28rpx;
-			line-height: 40rpx;
-			color: $black;
+			line-height: 44rpx;
+			color: $text-color-primary;
+		}
+
+		&__counter {
+			padding: 0 32rpx 24rpx;
+			text-align: right;
+			font-size: 24rpx;
+			color: $text-color-tertiary;
 		}
 
 		&__readonly {
@@ -104,4 +106,12 @@
 			z-index: 2;
 		}
 	}
+</style>
+
+<style lang="scss">
+/* placeholder-class 必须是全局类名：scoped 属性会漏掉 H5 端的动态占位节点 */
+.m-textarea__placeholder {
+	font-size: 28rpx;
+	color: $text-color-placeholder;
+}
 </style>

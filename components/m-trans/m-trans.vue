@@ -74,10 +74,10 @@ export default {
 	margin-top: 30rpx;
 	padding: 28rpx 32rpx;
 	box-sizing: border-box;
-	background-color: #ffffff;
+	background-color: $white;
 	.trans-title {
 		font-size: 32rpx;
-		color: #283036;
+		color: $text-color-primary;
 		font-weight: 800;
 	}
 	.trans-tree {
@@ -94,7 +94,7 @@ export default {
 			}
 			.trans-now {
 				font-size: 26rpx;
-				color: #5292ff;
+				color: $color-brand;
 			}
 		}
 		.trans-progress {
@@ -109,7 +109,7 @@ export default {
 				margin-left: -5rpx;
 				border-radius: 50%;
 				content: '';
-				background-color: #cdd2de;
+				background-color: $gray-200;
 			}
 			&::after {
 				position: absolute;
@@ -119,7 +119,7 @@ export default {
 				height: calc(100% + 20rpx);
 				border-radius: 50%;
 				content: '';
-				background-color: #cdd2de;
+				background-color: $gray-200;
 			}
 		}
 		&:last-child {
@@ -134,7 +134,7 @@ export default {
 				&::before {
 					width: 16rpx;
 					height: 16rpx;
-					background-color: #5292ff;
+					background-color: $color-brand;
 					margin-left: -8rpx;
 				}
 			}
@@ -144,7 +144,7 @@ export default {
 				&::before {
 					width: 26rpx;
 					height: 26rpx;
-					background-color: #2ccab7;
+					background-color: $color-success;
 					margin-left: -13rpx;
 				}
 			}
@@ -153,7 +153,7 @@ export default {
 			flex: 1;
 			.trans-position {
 				font-size: 24rpx;
-				color: #5292ff;
+				color: $color-brand;
 				margin-bottom: 10rpx;
 				&.old {
 					color: $black5;
@@ -165,7 +165,7 @@ export default {
 				justify-content: flex-start;
 				.trans-info-content--name {
 					font-size: 28rpx;
-					color: #283036;
+					color: $text-color-primary;
 				}
 				.trans-info-content--status {
 					margin-left: 20rpx;
@@ -173,28 +173,28 @@ export default {
 					border-radius: 8rpx;
 					font-size: 24rpx;
 					&.info {
-						color: #5292ff;
-						background-color: #edf4ff;
+						color: $color-brand;
+						background-color: $color-brand-light;
 					}
 					&.error {
-						color: #fa6412;
-						background-color: #fff3ed;
+						color: $color-warning;
+						background-color: $orange-50;
 					}
 				}
 			}
 			.trans-info-status {
 				margin-top: 16rpx;
 				font-size: 24rpx;
-				color: #868891;
+				color: $text-color-secondary;
 			}
 			.trans-info-reason {
 				margin-top: 24rpx;
 				font-size: 20rpx;
-				color: #999999;
+				color: $text-color-tertiary;
 			}
 			.trans-complete {
 				font-size: 24rpx;
-				color: #2ccab7;
+				color: $color-success;
 			}
 		}
 	}

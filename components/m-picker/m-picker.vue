@@ -65,12 +65,12 @@
 		height: 100rpx;
 		line-height: 100rpx;
 		box-sizing: border-box;
+		font-size: $form-value-size;
+		color: $text-color-primary;
 
 		&__content {
 			text-align: right;
-			font-size: 30rpx;
-			color: $black;
 		}
-		&__placeholder { color: $placeholder; }
+		&__placeholder { color: $text-color-placeholder; }
 	}
 </style>

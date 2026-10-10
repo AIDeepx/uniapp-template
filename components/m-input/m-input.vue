@@ -50,9 +50,9 @@
 		width: 100%;
 		box-sizing: border-box;
 		text-align: right;
-		font-size: 30rpx;
-		color: $black;
-		background-color: $white;
+		font-size: $form-value-size;
+		color: $text-color-primary;
+		background-color: transparent;
 
 		&__control {
 			width: 100%;
@@ -60,12 +60,12 @@
 			line-height: 88rpx;
 			box-sizing: border-box;
 			text-align: inherit;
-			font-size: 30rpx;
-			color: $black;
+			font-size: inherit;
+			color: inherit;
 		}
 
 		&__placeholder {
-			color: $placeholder;
+			color: $text-color-placeholder;
 		}
 	}
 </style>

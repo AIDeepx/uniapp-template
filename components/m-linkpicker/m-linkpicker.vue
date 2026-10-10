@@ -80,7 +80,7 @@
 		overflow: hidden;
 
 		.placeholder {
-			color: #cdd5dc;
+			color: $text-color-placeholder;
 		}
 	}
 </style>

@@ -97,5 +97,8 @@
 	.checkbox-group {
 		display: flex;
 		align-items: center;
+		flex-wrap: wrap;
+		column-gap: 36rpx;
+		row-gap: 16rpx;
 	}
 </style>

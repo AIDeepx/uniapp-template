@@ -49,7 +49,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		height: 100rpx;
+		flex-wrap: wrap;
+		column-gap: 36rpx;
+		row-gap: 16rpx;
+		min-height: 100rpx;
 		line-height: 100rpx;
 
 		.radio-item {

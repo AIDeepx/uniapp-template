@@ -129,7 +129,7 @@
 			height: 88rpx;
 			line-height: 88rpx;
 			justify-content: space-between;
-			background-color: #fff;
+			background-color: $white;
 			color: $blue;
 		}
 	}

@@ -1,11 +1,14 @@
 <template>
-	<view :class="['m-form-item', { 'is-submit': hasButtonType, 'is-error': isError }]" @click="onClick">
-		<view class="m-form-item__required" v-if="required"></view>
-		<view class="m-form-item__label" :style="{ width: labelWidth + 'rpx' }">{{ label }}</view>
-		<view class="m-form-item__content" :style="{ textAlign }">
-			<slot />
+	<view :class="['m-form-item', { 'is-submit': hasButtonType, 'is-error': isError }]">
+		<view class="m-form-item__row" @click="onClick">
+			<view class="m-form-item__required" v-if="required"></view>
+			<view class="m-form-item__label" :style="{ width: labelWidth + 'rpx' }">{{ label }}</view>
+			<view class="m-form-item__content" :style="{ textAlign }">
+				<slot />
+			</view>
+			<view class="m-form-item__arrow iconfont" v-if="arrow">&#xe642;</view>
 		</view>
-		<view class="m-form-item__arrow iconfont" v-if="arrow">&#xe642;</view>
+		<view class="m-form-item__error" v-if="isError && errorMsg">{{ errorMsg }}</view>
 	</view>
 </template>
 
@@ -36,6 +39,7 @@
 				hasButtonType: false,
 				mValue: '',
 				isError: false,
+				errorMsg: '',
 			}
 		},
 		mounted() {
@@ -49,9 +53,10 @@
 			setValue(v) {
 				this.mValue = v
 				this.isError = false
+				this.errorMsg = ''
 			},
 			getValue() { return this.mValue },
-			reset() { this.mValue = ''; this.isError = false },
+			reset() { this.mValue = ''; this.isError = false; this.errorMsg = '' },
 			validate() {
 				let valid = true
 				let msg = ''
@@ -67,6 +72,7 @@
 					}
 				}
 				this.isError = !valid
+				this.errorMsg = msg
 				return { valid, msg }
 			},
 			_isEmpty(v) {
@@ -84,64 +90,75 @@
 	.m-form-item {
 		position: relative;
 		width: 100%;
-		margin-top: 1px;
-		padding: 0 32rpx;
-		display: flex;
-		align-items: center;
-		background-color: $white;
+		background-color: $form-card-bg;
 		box-sizing: border-box;
 
+		&__row {
+			display: flex;
+			align-items: center;
+			min-height: $form-row-min-height;
+			padding: 24rpx 32rpx;
+			box-sizing: border-box;
+			border-bottom: 1px solid $form-divider;
+		}
+		&:last-child &__row,
+		&.is-submit &__row {
+			border-bottom: none;
+		}
+
 		&__required {
-			position: relative;
-			width: 24rpx;
-			height: 24rpx;
+			flex-shrink: 0;
+			width: 14rpx;
+			color: $color-error;
+			font-size: 28rpx;
+			line-height: 1;
 			&::after {
-				position: absolute;
-				top: 0;
-				left: 0;
 				content: "*";
-				color: $red;
-				font-size: 36rpx;
 			}
 		}
 
 		&__arrow {
-			margin-left: 10rpx;
-			color: #cdd5dc;
-			font-size: 26rpx;
+			margin-left: 12rpx;
+			color: $gray-200;
+			font-size: 24rpx;
 			transform: rotate(90deg);
 		}
 
 		&__label {
-			font-size: 28rpx;
-			color: $black;
-			box-sizing: border-box;
 			flex-shrink: 0;
+			font-size: $form-label-size;
+			color: $text-color-secondary;
+			line-height: 1.4;
 		}
 
 		&__content {
 			flex: 1;
-			margin-left: 20rpx;
 			min-width: 0;
+			margin-left: 24rpx;
+			color: $text-color-primary;
+			font-size: $form-value-size;
 		}
 
 		&.is-submit {
 			background: none;
 			.m-form-item__content {
-				padding: 110rpx 0;
+				padding: 20rpx 0;
 				box-sizing: border-box;
 			}
 		}
 
 		&.is-error {
-			&::after {
-				position: absolute;
-				top: 0; left: 0; right: 0; bottom: 0;
-				content: '';
-				border: 1px solid $red;
-				pointer-events: none;
+			.m-form-item__label { color: $color-error; }
+			.m-form-item__row {
+				border-bottom-color: $color-error;
 			}
-			.m-form-item__label { color: $red; }
+			.m-form-item__error {
+				padding: 0 32rpx 20rpx;
+				font-size: 24rpx;
+				line-height: 1.4;
+				color: $color-error;
+				text-align: left;
+			}
 		}
 	}
 </style>

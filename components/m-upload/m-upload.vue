@@ -29,7 +29,7 @@
 			modelValue: { type: Array, default: () => [] },
 			required: { type: Boolean, default: false },
 			disabled: { type: Boolean, default: false },
-			descColor: { type: String, default: '#919aa1' },
+			descColor: { type: String, default: '' }, // 默认走 SCSS 令牌 $text-color-tertiary
 		},
 		data() { return { mValue: [] } },
 		watch: { modelValue(val) { this.mValue = Array.isArray(val) ? val : [] } },
@@ -80,27 +80,25 @@
 		box-sizing: border-box;
 		background-color: $white;
 
-		&::before,
-		&::after {
-			position: absolute;
-			top: 0; left: 0;
-			width: 100%; height: 1px;
-			content: '';
-			background-color: $pageBg;
-		}
-		&::after { top: auto; bottom: 0; }
-
 		&__title {
-			height: 100rpx;
-			line-height: 100rpx;
+			display: flex;
+			align-items: center;
+			min-height: 100rpx;
 			font-size: 28rpx;
+			color: $text-color-secondary;
+			border-bottom: 1px solid $divider-color;
 		}
 		&__required {
-			margin-right: 10rpx;
-			color: $orange;
-			font-size: 36rpx;
+			margin-right: 8rpx;
+			color: $color-error;
+			font-size: 28rpx;
+			line-height: 1;
 		}
-		&__tip { font-size: 24rpx; margin-top: -10rpx; }
+		&__tip {
+			font-size: 24rpx;
+			margin-top: 16rpx;
+			color: $text-color-tertiary;
+		}
 
 		&__images {
 			margin-top: 30rpx;
@@ -113,7 +111,7 @@
 			display: block;
 			width: 100%;
 			height: 140rpx;
-			border-radius: 8rpx;
+			border-radius: $radius-md;
 			overflow: hidden;
 		}
 		&__close {
@@ -127,16 +125,16 @@
 			border-radius: 50%;
 			font-size: 24rpx;
 			text-align: center;
-			background-color: #cdd5dc;
+			background-color: $gray-200;
 			z-index: 2;
 		}
 		&__btn {
 			line-height: 140rpx;
 			text-align: center;
 			font-size: 40rpx;
-			color: #6a7e9a;
-			border: 1px dashed #6a7e9a;
-			border-radius: 16rpx;
+			color: $gray-400;
+			border: 1px dashed $gray-400;
+			border-radius: $radius-lg;
 		}
 	}
 </style>

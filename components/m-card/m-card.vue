@@ -56,11 +56,12 @@
 <style lang="scss" scoped>
 	.m-card {
 		margin-top: 24rpx;
-		padding: 30rpx 32rpx;
-		border-radius: $radius-md;
+		padding: 28rpx 32rpx;
+		border-radius: $radius-lg;
 		background-color: $white;
 		overflow: hidden;
 		box-sizing: border-box;
+		box-shadow: 0 6rpx 20rpx rgba(40, 48, 54, 0.06);
 
 		&__head {
 			display: flex;
@@ -68,25 +69,26 @@
 			align-items: center;
 		}
 		&__title {
-			padding-bottom: 30rpx;
+			padding-bottom: 24rpx;
 			flex: 1;
 			font-size: 30rpx;
 			font-weight: bold;
-			color: $black;
-			border-bottom: 1px solid $pageBg;
+			color: $text-color-primary;
+			border-bottom: 1px solid $divider-color;
 		}
 		&__status {
 			width: 140rpx;
 			font-size: 26rpx;
 			text-align: right;
+			font-weight: 500;
 		}
 		&__row {
 			display: flex;
 			justify-content: space-between;
-			margin-top: 30rpx;
+			margin-top: 24rpx;
 			font-size: 26rpx;
 		}
-		&__label { color: #aeb8c0; flex-shrink: 0; }
-		&__text { flex: 1; text-align: right; color: $black; }
+		&__label { color: $text-color-tertiary; flex-shrink: 0; }
+		&__text { flex: 1; text-align: right; color: $text-color-primary; }
 	}
 </style>

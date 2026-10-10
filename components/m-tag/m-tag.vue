@@ -12,13 +12,14 @@
 
 <style lang="scss" scoped>
 .tag {
-	padding: 6rpx 12rpx;
+	padding: 6rpx 16rpx;
 	display: inline-block;
 	font-size: 24rpx;
-	line-height: 24rpx;
+	line-height: 1.4;
 	box-sizing: border-box;
-	border: 1px solid $blue;
+	border: 1px solid $blue-200;
 	border-radius: 8rpx;
-	color: $blue;
+	background-color: $blue-50;
+	color: $color-brand;
 }
 </style>

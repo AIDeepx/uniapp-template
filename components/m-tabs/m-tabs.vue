@@ -114,8 +114,8 @@
 			box-sizing: border-box;
 
 			&.active {
-				color: $black;
-				font-weight: bold;
+				color: $blue;
+				font-weight: 500;
 			}
 
 			&.active::before {

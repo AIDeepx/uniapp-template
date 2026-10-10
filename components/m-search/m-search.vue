@@ -133,7 +133,7 @@
 				padding-left: 70rpx;
 				color: $black9;
 				box-sizing: border-box;
-				background-color: #f5f9fc;
+				background-color: $gray-100;
 			}
 		}
 		.other {
@@ -146,7 +146,7 @@
 			text-align: center;
 			border-radius: 70rpx;
 			font-size: 26rpx;
-			background-color: #f5f9fc;
+			background-color: $gray-100;
 			border: 1px solid $blue;
 			overflow: hidden;
 			&.active {
@@ -175,11 +175,11 @@
 		height: 100%;
 		overflow: hidden;
 		transition: all 0.3s ease;
-		background-color: rgba($color: #000000, $alpha: 0);
+		background-color: rgba($color: $black, $alpha: 0);
 		z-index: 999;
 		&.show {
 			visibility: visible;
-			background-color: rgba($color: #000000, $alpha: 0.8);
+			background-color: rgba($color: $black, $alpha: 0.8);
 			.content {
 				transform: translateY(0);
 			}
@@ -219,8 +219,8 @@
 						color: $black5;
 						text-align: center;
 						overflow: hidden;
-						border: 1px solid #f5f9fc;
-						background-color: #f5f9fc;
+						border: 1px solid $gray-100;
+						background-color: $gray-100;
 						&.colspan-2 {
 							width: calc(100% - 20rpx);
 						}
@@ -246,7 +246,7 @@
 					text-align: center;
 					font-size: 28rpx;
 					border-radius: 90rpx;
-					border: 1px solid #ACBCD2;
+					border: 1px solid $gray-300;
 					&:last-child{
 						margin-left: 14rpx;
 					}
