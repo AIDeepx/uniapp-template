@@ -6,7 +6,11 @@ import config from './utils/config.js'
 import { createSSRApp } from 'vue'
 import { installStore } from './store/index.js'
 // 微信 JS-SDK 统一封装（仅 H5 端有效，其他端被条件编译剔除）
+// 注意：import 本身也必须用 #ifdef H5 包起来——因为 utils/wxsdk/ 整个目录在
+// 非 H5 端会被条件编译清空，若此处无条件 import，default 导出不存在会直接编译失败。
+// #ifdef H5
 import wxsdk from './utils/wxsdk/index.js'
+// #endif
 // #ifndef VUE3
 import Vue from 'vue'
 import { createPinia } from 'pinia'
@@ -45,7 +49,9 @@ function install(proto) {
   proto.api = Api
   proto.config = config
   proto.jump = Util.jump
+  // #ifdef H5
   proto.wxsdk = wxsdk
+  // #endif
 }
 
 // #ifdef VUE3

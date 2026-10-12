@@ -263,6 +263,22 @@ try {
   const noInitInMain = mainSrc.indexOf('wxsdk.ready()') === -1 && mainSrc.indexOf('wxsdk.preload()') === -1
   noInitInMain ? ok('main.js 未强制初始化（采用「首次调用自动 init」策略）') : bad('main.js 存在强制初始化')
 
+  // ⚠️ 关键回归点：整个 wxsdk 目录被 #ifdef H5 包裹，非 H5 端会被清空成空文件。
+  // 若 main.js 无条件 import，default 导出会消失并导致小程序端编译失败
+  // （已实际踩过：main.js(9:7) "default" is not exported）。故断言 import 也在条件编译内。
+  const importIdx = mainSrc.indexOf("import wxsdk from './utils/wxsdk/index.js'")
+  importIdx > -1 ? ok('main.js 含 wxsdk import') : bad('main.js 缺 wxsdk import')
+  const before = mainSrc.slice(0, importIdx)
+  const after = mainSrc.slice(importIdx)
+  before.lastIndexOf('// #ifdef H5') > before.lastIndexOf('// #endif')
+    ? ok('main.js：wxsdk import 被 #ifdef H5 包裹（非 H5 端不会因缺导出而编译失败）')
+    : bad('main.js：wxsdk import 未加 #ifdef H5 保护', '会在小程序端编译失败')
+
+  // demo 需对 this.wxsdk 做 undefined 兜底（非 H5 端未注入）
+  const demoSrc = fs.readFileSync(path.join(ROOT, 'pages/demo/index.vue'), 'utf8')
+  demoSrc.indexOf('if (!this.wxsdk)') > -1
+    ? ok('demo：this.wxsdk 已做 undefined 兜底') : bad('demo 缺 wxsdk 兜底')
+
   fs.readFileSync(path.join(ROOT, 'utils/config.js'), 'utf8').indexOf('WX_SDK') > -1
     ? ok('config.js 已定义 WX_SDK 配置块') : bad('config 缺 WX_SDK')
   fs.existsSync(path.join(ROOT, 'static/js/jweixin-1.6.0.js'))

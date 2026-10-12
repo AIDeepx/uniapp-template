@@ -594,7 +594,48 @@
 			</view>
 
 			<!-- ============================================================
-			     6. 工具库 utils
+			     6. 状态管理 Pinia
+			     ============================================================ -->
+			<view v-if="group === 'store'" class="sec">
+				<view class="sec__head">
+					<view class="sec__title">状态管理 Pinia</view>
+					<view class="sec__sub">登录态 · 多标签 · 持久化</view>
+				</view>
+
+				<view class="card">
+					<view class="card__title">this.store 应用级状态</view>
+					<view class="kv"><text class="kv__k">isLogin</text><text class="kv__v">{{ this.store.isLogin }}</text></view>
+					<view class="kv"><text class="kv__k">token</text><text class="kv__v">{{ this.store.token || '（空）' }}</text></view>
+					<view class="kv"><text class="kv__k">userName</text><text class="kv__v">{{ this.store.userName || '（未登录）' }}</text></view>
+					<view class="row">
+						<m-button @click="onStoreLogin">模拟登录</m-button>
+						<m-button type="delete" ghost @click="onStoreLogout">登出</m-button>
+					</view>
+					<view class="hint">
+						登录态以 store 为唯一真相源；utils 的 setToken/getUser 全部转发到这里，
+						因此不存在「store 已登出、请求头还带 token」的分裂状态。
+					</view>
+				</view>
+
+				<view class="card">
+					<view class="card__title">this.tabs 多标签状态</view>
+					<view class="kv"><text class="kv__k">activeKey</text><text class="kv__v">{{ this.tabs.activeKey }}</text></view>
+					<view class="kv"><text class="kv__k">badge</text><text class="kv__v">{{ JSON.stringify(this.tabs.badge) }}</text></view>
+					<view class="kv"><text class="kv__k">totalBadge</text><text class="kv__v">{{ this.tabs.totalBadge }}</text></view>
+					<view class="row">
+						<m-button ghost @click="this.tabs.setActive('todo')">切到待办</m-button>
+						<m-button ghost @click="this.tabs.addBadge('todo', 1)">待办 +1</m-button>
+						<m-button ghost @click="this.tabs.visit('todo')">已读（清徽标）</m-button>
+					</view>
+					<view class="hint">
+						跨页面共享 + 自动持久化（activeKey / badge）；
+						刷新页面后仍保持上次选中项与徽标。
+					</view>
+				</view>
+			</view>
+
+			<!-- ============================================================
+			     7. 工具库 utils
 			     ============================================================ -->
 			<view v-if="group === 'utils'" class="sec">
 				<view class="sec__head">
@@ -720,6 +761,25 @@
 					<view class="kv"><text class="kv__k">demo.upload</text><text class="kv__v">{{ api.demo.upload }}</text></view>
 				</view>
 
+				<!-- 微信 JSSDK（仅 H5 微信内生效） -->
+				<view class="card">
+					<view class="card__title">微信 JSSDK · this.wxsdk</view>
+					<view class="kv"><text class="kv__k">available()</text><text class="kv__v">{{ String(wxsdkAvailable) }}</text></view>
+					<view class="kv"><text class="kv__k">config.url</text><text class="kv__v">{{ config.WX_SDK.url }}</text></view>
+					<view class="kv"><text class="kv__k">sdkUrl</text><text class="kv__v">{{ config.WX_SDK.sdkUrl }}</text></view>
+					<view class="row">
+						<m-button ghost @click="onWxInit">尝试初始化</m-button>
+						<m-button ghost @click="onWxScan">扫码</m-button>
+						<m-button ghost @click="onWxLocate">定位</m-button>
+						<m-button ghost @click="onWxShare">设分享</m-button>
+					</view>
+					<view class="hint">
+						H5 端微信内可用；非微信环境 / 小程序端自动降级返回
+						<code>{ ok:false, reason:'not-wechat' }</code>，不抛异常、不阻塞页面。
+						首次调用会自动完成「加载 SDK → 取签名 → wx.config → wx.ready」，无需手动 getConfig。
+					</view>
+				</view>
+
 				<!-- 上传 -->
 				<view class="card">
 					<view class="card__title">图片上传 · m-upload</view>
@@ -731,6 +791,7 @@
 </template>
 
 <script>
+	import { useAppStore, useTabsStore } from '@/store/index.js'
 	export default {
 		data() {
 			return {
@@ -741,6 +802,7 @@
 					{ key: 'overlay', label: '弹层' },
 					{ key: 'data', label: '展示' },
 					{ key: 'biz', label: '业务' },
+					{ key: 'store', label: '状态' },
 					{ key: 'utils', label: '工具' },
 				],
 				componentCount: 44,
@@ -801,9 +863,16 @@
 				linkUrl: '/pages/demo/index',
 
 				/* ---- 弹层 ---- */
-popupVisible: false,
+				popupVisible: false,
 			popupCustom: false,
 			popupConfirm: false,
+
+			/* ---- Pinia ---- */
+			demoStore: null,
+			demoTabs: null,
+
+			/* ---- 微信 JSSDK ---- */
+			wxsdkAvailable: false,
 				tabValue: 'a',
 				tabData: [
 					{ value: 'a', text: '选项A' },
@@ -962,10 +1031,20 @@ popupVisible: false,
 			},
 		},
 		created() {
+			// Pinia：Options API 下通过 this.store / this.tabs 访问，无需逐页 import；
+			// 这里同时演示 Composition 取法（useXxxStore()）。
+			this.demoStore = useAppStore()
+			this.demoTabs = useTabsStore()
+			this.demoTabs.setBadge('todo', 5)
+			// this.wxsdk 仅 H5 端注入，其他端为 undefined，这里做安全兜底
+			this.wxsdkAvailable = this.wxsdk ? this.wxsdk.available() : false
 			this.currentPath = this.util.getCurrentPath()
 			const c = this.util.cache.get('demo')
 			this.cacheText = c ? JSON.stringify(c) : ''
 			this.tokenText = this.util.getToken() || ''
+		},
+		beforeUnmount() {
+			// 退出登录演示：清 store 登录态（持久化由插件自动处理）
 		},
 		methods: {
 			/* ---------- 通用 ---------- */
@@ -1029,6 +1108,50 @@ popupVisible: false,
 			onPopupConfirm() {
 				this.popupConfirm = false
 				this.log('m-popup 确认')
+			},
+
+			/* ---------- Pinia ---------- */
+			onStoreLogin() {
+				this.store.login({
+					token: 'demo-token-' + Date.now(),
+					user: { id: 1, name: '张三', permissions: ['order:view', 'order:audit'] },
+				})
+				this.log('store.login：已写入 token + 用户态')
+			},
+			onStoreLogout() {
+				this.store.logout()
+				this.log('store.logout：已清空登录态')
+			},
+
+			/* ---------- 微信 JSSDK ---------- */
+			onWxInit() {
+				if (!this.wxsdk) return this.log('当前端不支持微信 JSSDK（仅 H5）')
+				this.wxsdk.ready()
+					.then((res) => {
+						this.wxsdkAvailable = this.wxsdk.available()
+						this.log('wxsdk.ready → ' + (res.ok ? '已就绪' : '降级：' + res.reason))
+					})
+					.catch((e) => this.log('wxsdk 初始化失败：' + (e && e.errMsg)))
+			},
+			onWxScan() {
+				if (!this.wxsdk) return this.log('当前端不支持微信 JSSDK（仅 H5）')
+				this.wxsdk.scanQRCode()
+					.then((r) => this.log('扫码结果：' + JSON.stringify(r)))
+					.catch((e) => this.log('扫码失败：' + (e && e.errMsg)))
+			},
+			onWxLocate() {
+				if (!this.wxsdk) return this.log('当前端不支持微信 JSSDK（仅 H5）')
+				this.wxsdk.getLocation({ type: 'gcj02' })
+					.then((r) => this.log('定位：' + r.latitude + ',' + r.longitude))
+					.catch((e) => this.log('定位失败：' + (e && e.errMsg)))
+			},
+			onWxShare() {
+				if (!this.wxsdk) return this.log('当前端不支持微信 JSSDK（仅 H5）')
+				this.wxsdk.readyForShare({
+					title: 'uniapp-template',
+					desc: '来自微信 JSSDK 封装',
+					link: this.util.getCurrentPath(),
+				}).then((r) => this.log('设置分享 → ' + (r.ok ? '已生效' : r.reason)))
 			},
 
 			/* ---------- 附件 / 文件列表 / 单选列表 / 账号 / 明细 ---------- */
