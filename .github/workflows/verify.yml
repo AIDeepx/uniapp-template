@@ -16,7 +16,7 @@ jobs:
           node-version: '20'
       - name: 安装工具依赖
         run: npm install
-      - name: 运行设计系统校验（规范 / 组件 / 令牌 / 日期 / demo）
+      - name: 运行设计系统校验（规范 / 组件 / 令牌 / 日期 / store / demo）
         run: npm run verify
 
   lint:

@@ -8,38 +8,34 @@
  */
 
 import config from './config.js'
-import cache from './cache.js'
-import { post, get, setToken, clearToken } from './request.js'
+import { post, get, clearToken } from './request.js'
+import { getAppStore } from '../store/bridge.js'
 
-const USER_KEY = config.CACHE_PREFIX + 'user'
-
-let userinfo = null
-let logging = false
-
+/**
+ * 用户态读写统一转发到 store/app.js（唯一真相源）。
+ * 旧导出保留仅为兼容老业务代码，模块内不再维护 userinfo 副本，
+ * 避免「store 清了但这里还留着」导致退出登录后仍显示已登录。
+ */
 export function setUser(info) {
-  userinfo = info
-  if (info) cache.set('user', info)
+  getAppStore().setUser(info)
 }
 export function clearUser() {
-  userinfo = null
+  getAppStore().setUser(null)
   clearToken()
-  cache.del('user')
 }
 export function getCachedUser() {
-  return userinfo || cache.get('user')
+  return getAppStore().userInfo
 }
 
 export async function getUser() {
-  if (userinfo) return userinfo
-  const cached = cache.get('user')
-  if (cached && getToken()) {
-    userinfo = cached
-    return userinfo
-  }
+  const app = getAppStore()
+  // 已有用户态且带 token → 直接复用，避免重复登录
+  if (app.userInfo && app.token) return app.userInfo
   return login()
 }
 
 /* ------------------------- 登录分发 ------------------------- */
+let logging = false
 async function login() {
   if (logging) return new Promise((r) => setTimeout(() => r(getUser()), 300))
   logging = true
@@ -107,10 +103,10 @@ function loginByH5() {
 
 function finishLogin(data) {
   if (!data) return false
-  if (data.token) setToken(data.token)
   const info = { ...data }
   delete info.token
-  setUser(info)
+  // token 与用户态一并写入 store（store 内部同步到持久化）
+  getAppStore().login({ token: data.token, user: info })
   return info
 }
 

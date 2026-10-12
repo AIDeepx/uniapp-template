@@ -11,8 +11,13 @@ export default {
     userInfo: '/auth/userInfo',
   },
 
-  // 示例接口（演示用，可删除）
-  demo: {
+	// 微信 JS-SDK 签名（与 config.WX_SDK.url 对应，H5 端使用）
+	wx: {
+		jsSdkConfig: '/wx/jsSdkConfig',
+	},
+
+	// 示例接口（演示用，可删除）
+	demo: {
     list: '/demo/list',
     detail: '/demo/detail',
     upload: '/common/upload',

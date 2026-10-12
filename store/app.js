@@ -1,55 +1,80 @@
 /**
- * 集中状态管理（Pinia）
+ * 应用级状态（Pinia）—— 登录态 / 用户态的**唯一真相源**
  *
- * 定位：项目级「新增共享状态」的单一事实源（用户态、登录态、应用级配置）。
- * 老代码仍走 this.util / cache.js 不受影响；**新写的跨组件共享状态请放这里**，
- * 不要再散落到全局 util 或组件 data 里。
+ * 设计约束（2026-10-12 重构）：
+ * 1. token / userInfo 以本 store 为准；持久化交给 persist 插件，不再手写 cache.set。
+ * 2. utils/request.js 与 utils/user.js 的 setToken/getUser 等旧导出全部改为
+ *    「转发到本 store」，保证老业务代码零改动、且不会出现两份 token 不一致。
+ * 3. 登录态失效由 request 层广播 http:unauthorized，main.js 侧订阅后调用
+ *    logout()，因此任何页面都不会出现「已登出但界面仍显示登录态」。
  *
- * 持久化：复用 utils/cache.js（统一前缀 + 过期）。store 只管内存态，
- * 写操作同时落 cache，冷启动时从 cache  hydrate。
- *
- * 用法（Options API 组件内）：
- *   import { useAppStore } from '@/store/app.js'
- *   const app = useAppStore()           // 在 created / methods 里调用即可
- *   app.token / app.isLogin
- *   app.setToken('xxx') / app.login({ token, user }) / app.logout()
- * 或在模板里：<text>{{ app.userInfo?.name }}</text>
+ * 用法（Options API 组件内，已全局注入，无需 import）：
+ *   this.store.isLogin / this.store.userInfo / this.store.token
+ *   this.store.login({ token, user }) / this.store.logout()
+ * 或（Composition API / 任意 JS）：
+ *   import { useAppStore } from '@/store/index.js'
+ *   const app = useAppStore()
  */
 import { defineStore } from 'pinia'
-import cache from '@/utils/cache.js'
-
-const TOKEN_KEY = 'token'
-const USER_KEY = 'user'
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    token: cache.get(TOKEN_KEY) || '',
-    userInfo: cache.get(USER_KEY) || null,
+    token: '',
+    userInfo: null,
+    // 应用级 UI 状态：底部/侧边折叠、启动图是否已关闭等
+    systemInfo: null,
   }),
+
   getters: {
     isLogin: (state) => !!state.token,
+    userId: (state) => (state.userInfo && (state.userInfo.id || state.userInfo.userId)) || '',
+    userName: (state) => (state.userInfo && (state.userInfo.name || state.userInfo.realName)) || '',
+    // 常用权限位读取：hasPermission('xxx') 返回布尔
+    hasPermission: (state) => (code) => {
+      const list = (state.userInfo && (state.userInfo.permissions || state.userInfo.roles)) || []
+      return list.indexOf(code) > -1
+    },
   },
+
   actions: {
-    setToken(token) {
-      this.token = token || ''
-      if (this.token) cache.set(TOKEN_KEY, this.token)
-      else cache.del(TOKEN_KEY)
-    },
-    setUser(user) {
-      this.userInfo = user || null
-      if (this.userInfo) cache.set(USER_KEY, this.userInfo)
-      else cache.del(USER_KEY)
-    },
-    // 登录成功后一次性写入 token + 用户态
+    /** 登录成功后一次性写入 token + 用户态 */
     login({ token, user }) {
       this.setToken(token)
       this.setUser(user)
+      return this
     },
-    // 退出登录：清 store + 清全部本地缓存
+    setToken(token) {
+      this.token = token || ''
+    },
+    setUser(user) {
+      this.userInfo = user || null
+    },
+    setSystemInfo(info) {
+      this.systemInfo = info || null
+    },
+    /** 局部更新用户信息（如资料页改昵称） */
+    patchUser(patch) {
+      if (!this.userInfo || !patch) return
+      this.userInfo = { ...this.userInfo, ...patch }
+    },
+    /**
+     * 退出登录：清登录态。
+     * 注意不清全部本地缓存——各业务方自己的草稿缓存应保留；
+     * 若需彻底清理，请调用 this.util.cache.clearAll()。
+     */
     logout() {
-      this.setToken('')
-      this.setUser(null)
-      cache.clearAll()
+      this.token = ''
+      this.userInfo = null
+    },
+    /** 强制退出（登录失效场景）：连同本地缓存一起清 */
+    forceLogout() {
+      this.logout()
+      try {
+        uni.removeStorageSync('__pinia_app__')
+      } catch (e) { /* 小程序端无此 key 时忽略 */ }
     },
   },
+
+  // 持久化：token / userInfo 落本地，systemInfo 不落
+  persist: { paths: ['token', 'userInfo'] },
 })

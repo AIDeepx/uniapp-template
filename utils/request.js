@@ -13,19 +13,21 @@
 
 import config from './config.js'
 import cache from './cache.js'
+import { getAppStore } from '../store/bridge.js'
 
-const TOKEN_KEY = config.CACHE_PREFIX + 'token'
-
-/* ------------------------- token ------------------------- */
+/**
+ * token 的读写统一转发到 store/app.js（唯一真相源），
+ * 旧导出 setToken/getToken/clearToken 保留，仅为兼容老业务代码，
+ * 不再各自维护 cache，避免出现「store 与 request 各存一份 token」。
+ */
 export function setToken(token) {
-  if (token) cache.set('token', token)
-  else cache.del('token')
+  getAppStore().setToken(token)
 }
 export function getToken() {
-  return cache.get('token') || ''
+  return getAppStore().token || ''
 }
 export function clearToken() {
-  cache.del('token')
+  getAppStore().setToken('')
 }
 export function getHost() {
   return config.API_BASE

@@ -46,6 +46,21 @@ const AUTH_API = {
   h5Redirect: 'https://your-domain.com/auth/h5',
 }
 
+/**
+ * 微信公众号 JS-SDK 配置（仅 H5 端生效）
+ *
+ * - url：后端签名接口，需按项目实际路径修改
+ * - tag：后端据此区分业务场景（部分项目用同一签名接口服务多个公众号）
+ * - sdkUrl：jweixin sdk 地址，默认走 static 目录；也可改用 CDN
+ * - debug：线上务必 false（true 会弹出调试浮层）
+ */
+const WX_SDK = {
+  url: '/wx/jsSdkConfig',
+  tag: 24,
+  sdkUrl: '/static/js/jweixin-1.6.0.js',
+  debug: isDev,
+}
+
 const config = {
   isDev,
   PLATFORM,
@@ -54,10 +69,11 @@ const config = {
   AUTH_API,
   // 本地缓存 key 前缀
   CACHE_PREFIX: 'zfsw_',
-  // 视为“未登录 / 登录失效”的业务状态码
+  // 视为"未登录 / 登录失效"的业务状态码
   UNAUTH_CODES: [401, 403, 408],
   // 请求超时（毫秒）
   TIMEOUT: 30000,
+  WX_SDK,
 }
 
 export default config
