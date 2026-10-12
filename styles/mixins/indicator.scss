@@ -1,0 +1,42 @@
+/* =========================================================================
+ * 原子视觉 mixin：选中指示器（radio / checkbox / 箭头）
+ *
+ * 为什么是 mixin 而不是组件：
+ * 列表里每行一个指示器时，做成 Vue 组件会在 mp-weixin 产生 N 个自定义组件
+ * 实例（额外节点 + 通信开销）。纯 CSS mixin 零运行时开销，且任意组件可复用。
+ *
+ * 用法：
+ *   .row__radio       { @include indicator(48rpx); }
+ *   .row__radio.is-on { @include indicator-on(48rpx); }
+ * ========================================================================= */
+
+/* 未选中态：空心描边 */
+@mixin indicator($size: 48rpx, $radius: 50%, $border: $gray-300) {
+	position: relative;
+	flex-shrink: 0;
+	width: $size;
+	height: $size;
+	box-sizing: border-box;
+	border: 3rpx solid $border;
+	border-radius: $radius;
+}
+
+/* 选中态：实心主色 + 白色勾（勾的尺寸随 $size 等比缩放） */
+@mixin indicator-on($size: 48rpx, $color: $color-brand) {
+	border-color: $color;
+	background-color: $color;
+
+	&::after {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: $size * 0.26;
+		height: $size * 0.46;
+		margin-left: -$size * 0.13;
+		margin-top: -$size * 0.26;
+		border-right: 4rpx solid $white;
+		border-bottom: 4rpx solid $white;
+		transform: rotate(45deg);
+	}
+}

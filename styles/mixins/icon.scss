@@ -1,0 +1,196 @@
+/* =========================================================================
+ * 原子视觉 mixin：纯 CSS 绘制图标
+ *
+ * 为什么不用 iconfont：项目 iconfont 是 alicdn 远程字体，码位无法枚举、
+ * 不可信任（猜码 = 线上出现问号/错图）。icon 一律 CSS 绘制，零依赖、
+ * 零开销，且天然跟随语义令牌换色。
+ * ========================================================================= */
+
+/* ---------- 文件类型图标：圆角矩形 + 内文线条 ---------- */
+@mixin file-icon($color: $text-color-tertiary, $w: 56rpx, $h: 64rpx) {
+	position: relative;
+	flex-shrink: 0;
+	width: $w;
+	height: $h;
+	box-sizing: border-box;
+	border-radius: 6rpx;
+	background-color: $color;
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		left: $w * 0.21;
+		height: 4rpx;
+		border-radius: 2rpx;
+		background-color: $white;
+	}
+	&::before { top: $h * 0.34; width: $w * 0.56; }
+	&::after  { top: $h * 0.53; width: $w * 0.38; }
+}
+
+/* ---------- 文件夹图标 ---------- */
+@mixin file-icon-folder($color: $color-warning, $w: 56rpx, $h: 64rpx) {
+	position: relative;
+	flex-shrink: 0;
+	width: $w;
+	height: $h;
+	box-sizing: border-box;
+	border-radius: 6rpx;
+	background-color: $color;
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: $w * 0.18;
+		top: $h * 0.22;
+		width: $w * 0.4;
+		height: 6rpx;
+		border-radius: 3rpx 3rpx 0 0;
+		background-color: $white;
+	}
+	&::after {
+		content: '';
+		position: absolute;
+		left: $w * 0.18;
+		top: $h * 0.42;
+		width: $w * 0.64;
+		height: $h * 0.36;
+		border-radius: 0 3rpx 3rpx 3rpx;
+		background-color: $white;
+		opacity: 0.35;
+	}
+}
+
+/* ---------- 文档图标（附件方块内） ---------- */
+@mixin icon-doc($w: 40rpx, $h: 48rpx, $color: $color-brand) {
+	position: relative;
+	width: $w;
+	height: $h;
+	box-sizing: border-box;
+	border: 3rpx solid $color;
+	border-radius: 4rpx;
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		left: $w * 0.2;
+		height: 3rpx;
+		border-radius: 2rpx;
+		background-color: $color;
+	}
+	&::before { top: $h * 0.29; width: $w * 0.45; }
+	&::after  { top: $h * 0.54; width: $w * 0.3; }
+}
+
+/* ---------- 向上箭头（上传态） ---------- */
+@mixin icon-upload($size: 48rpx, $color: $color-brand) {
+	position: relative;
+	width: $size;
+	height: $size;
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: $size * 0.44;
+		width: 4rpx;
+		height: $size * 0.52;
+		margin-left: -2rpx;
+		border-radius: 2rpx;
+		background-color: $color;
+	}
+	&::after {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: $size * 0.06;
+		width: 0;
+		height: 0;
+		margin-left: -11rpx;
+		border-left: 11rpx solid transparent;
+		border-right: 11rpx solid transparent;
+		border-bottom: 15rpx solid $color;
+	}
+}
+
+/* ---------- 叉：在父元素（圆形底）内居中绘制，父级需 position: relative ---------- */
+@mixin icon-close-mark($len: 20rpx, $thick: 3rpx, $color: $white) {
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: $len;
+		height: $thick;
+		margin-left: -$len * 0.5;
+		margin-top: -$thick * 0.5;
+		border-radius: 2rpx;
+		background-color: $color;
+	}
+	&::before { transform: rotate(45deg); }
+	&::after  { transform: rotate(-45deg); }
+}
+
+/* ---------- 加号（文字操作按钮） ---------- */
+@mixin icon-plus($size: 24rpx, $thick: 3rpx, $color: $color-brand) {
+	position: relative;
+	width: $size;
+	height: $size;
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		border-radius: 2rpx;
+		background-color: $color;
+	}
+	&::before {
+		width: $size * 0.92;
+		height: $thick;
+		margin-left: -$size * 0.46;
+		margin-top: -$thick * 0.5;
+	}
+	&::after {
+		width: $thick;
+		height: $size * 0.92;
+		margin-left: -$thick * 0.5;
+		margin-top: -$size * 0.46;
+	}
+}
+
+/* ---------- 垃圾桶（破坏性操作） ---------- */
+@mixin icon-trash($w: 22rpx, $h: 24rpx, $color: $color-warning) {
+	position: relative;
+	width: $w;
+	height: $h;
+	box-sizing: border-box;
+	border: 3rpx solid $color;
+	border-top: none;
+	border-radius: 0 0 4rpx 4rpx;
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: -4rpx;
+		top: -6rpx;
+		width: $w + 2rpx;
+		height: 3rpx;
+		border-radius: 2rpx;
+		background-color: $color;
+	}
+}
+
+/* ---------- 右箭头 ---------- */
+@mixin icon-arrow($size: 16rpx, $thick: 3rpx, $color: $gray-300) {
+	flex-shrink: 0;
+	width: $size;
+	height: $size;
+	border-top: $thick solid $color;
+	border-right: $thick solid $color;
+	transform: rotate(45deg);
+}

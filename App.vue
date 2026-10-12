@@ -23,6 +23,6 @@
 	}
 
 	page {
-		background-color: #F5F9FC;
+		background-color: #F5F7FB;
 	}
 </style>

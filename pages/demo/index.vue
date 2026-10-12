@@ -99,9 +99,30 @@
 					<m-tag-group :options="tagOptions2" />
 				</view>
 
-				<!-- 步骤条 -->
-				<view class="card">
-					<view class="card__title">m-step 步骤条</view>
+			<!-- 导航栏 / 底部标签栏 -->
+			<view class="card">
+				<view class="card__title">m-navbar 导航栏</view>
+				<view class="demo-nav-wrap">
+					<m-navbar title="标准导航栏" :fixed="false" :safe-top="false" />
+				</view>
+				<m-space height="20rpx" />
+				<view class="demo-nav-wrap">
+					<m-navbar title="蓝色渐变头部" type="gradient" :fixed="false" :safe-top="false" :show-back="true" />
+				</view>
+				<view class="hint">实际项目通常配合 navigationStyle:custom 使用；fixed 默认 true 时会自动占位，避免内容被遮挡</view>
+			</view>
+
+			<view class="card">
+				<view class="card__title">m-tabbar 底部标签栏</view>
+				<view class="demo-tabbar-wrap">
+					<m-tabbar :items="tabbarItems" :value="tabbarValue" :fixed="false" @change="onTabbarChange" />
+				</view>
+				<view class="hint">当前选中：{{ tabbarValue }}（业务项目 fixed 默认 true；可配 pagePath + switchMode 自动跳转原生 tabBar）</view>
+			</view>
+
+			<!-- 步骤条 -->
+			<view class="card">
+				<view class="card__title">m-step 步骤条</view>
 					<m-step :steps="steps" :current="stepCurrent">
 						<view class="step-body">当前步骤：{{ steps[stepCurrent - 1] }}</view>
 					</m-step>
@@ -351,7 +372,7 @@
 			<view v-if="group === 'biz'" class="sec">
 				<view class="sec__head">
 					<view class="sec__title">业务组件</view>
-					<view class="sec__sub">级联选择 · 审批流 · 业务人员选择</view>
+					<view class="sec__sub">级联选择 · 审批流 · 附件 · 选项 · 分组 · 详情</view>
 				</view>
 				<view class="card">
 					<view class="card__title">m-cascade-picker 级联选择</view>
@@ -389,6 +410,98 @@
 					<view class="card__title">external-lecturer 业务示例</view>
 					<external-lecturer v-model:value="lecturerValue" v-model:search="lecturerSearch" />
 					<view class="hint">选中值：{{ lecturerValue || '（无）' }} / 搜索词：{{ lecturerSearch || '（无）' }}</view>
+				</view>
+
+				<!-- 附件上传 / 展示 -->
+				<view class="card">
+					<view class="card__title">m-file-upload 附件上传</view>
+					<m-file-upload v-model="attachments" tip="支持 Word / Excel / PDF；演示数据未接后端" @preview="onFilePreview" />
+					<m-space height="20rpx" />
+					<m-file-upload :model-value="attachments" title="附件" readonly />
+					<view class="hint">只读态（readonly）用于详情 / 审批页：不渲染添加与删除入口</view>
+				</view>
+
+				<!-- 文件列表项 -->
+				<view class="card">
+					<view class="card__title">m-file-item 文件列表项</view>
+					<view class="demo-file-list">
+						<m-file-item
+							v-for="f in fileList"
+							:key="f.id"
+							:name="f.name"
+							:time="f.time"
+							:type="f.type"
+							radio
+							:checked="fileChecked.indexOf(f.id) > -1"
+							@click="toggleFile(f)" />
+					</view>
+					<m-space height="20rpx" />
+					<view class="demo-file-list">
+						<m-file-item v-for="f in fileList" :key="'a' + f.id" :name="f.name" :type="f.type" arrow />
+					</view>
+					<view class="hint">
+						多选模式已选 {{ fileChecked.length }} 项；type 支持 word / excel / pdf / folder / image / file，也可直接传扩展名
+					</view>
+				</view>
+
+				<!-- 选项列表：行内单选 -->
+				<view class="card">
+					<view class="card__title">m-option-list 选项列表</view>
+					<view class="demo-panel">
+						<m-option-list
+							:data="selectOptions"
+							v-model:value="selectValue"
+							indicator="radio"
+							@change="onSelectChange" />
+					</view>
+					<m-space height="20rpx" />
+					<view class="demo-panel">
+						<m-option-list
+							:data="selectOptions"
+							v-model:value="multiValue"
+							mode="multiple"
+							indicator="checkbox"
+							@change="onMultiChange" />
+					</view>
+					<view class="hint">
+						单选 radio={{ selectValue }} / 多选 checkbox={{ JSON.stringify(multiValue) }}
+					</view>
+				</view>
+
+				<!-- 选项列表：卡片形态（选中描边，用于账号/车辆/审批人等点选即切换） -->
+				<view class="card">
+					<view class="card__title">m-option-list 卡片形态 variant="plain"</view>
+					<view class="demo-panel">
+						<m-option-list
+							:data="accounts"
+							v-model:value="accountValue"
+							variant="plain"
+							@change="onAccountChange" />
+					</view>
+					<view class="hint">variant=plain 时每行独立白卡、选中加品牌描边；当前：{{ accountValue }}</view>
+				</view>
+
+				<!-- 分组容器 + 描述列表 + 文字操作按钮：多明细标准组合 -->
+				<view class="card">
+					<view class="card__title">m-group / m-desc-list / m-text-action 组合</view>
+					<view class="demo-panel">
+						<m-group
+							v-for="(d, i) in detailList"
+							:key="d.title"
+							:title="d.title"
+							level="sub"
+							:action-text="i === detailList.length - 1 ? '新增用餐' : ''"
+							action-icon="plus"
+							@action="onDetailAdd(i)">
+							<m-desc-list :data="d.rows" :row-height="80" />
+							<m-space height="16rpx" />
+							<m-text-action v-if="i > 0" type="danger" icon="trash" @click="onDetailDelete(i)">删除用餐</m-text-action>
+						</m-group>
+					</view>
+					<view class="hint">
+						多明细 = m-group（子标题 + 8px 间距 + 操作位）+ m-desc-list（左标签右取值 + 对称内边距）+ m-text-action；
+						只读详情页只需 m-group + m-desc-list，不传 actionText 即可不渲染任何增删入口。
+					</view>
 				</view>
 			</view>
 
@@ -542,7 +655,7 @@
 					{ key: 'biz', label: '业务' },
 					{ key: 'utils', label: '工具' },
 				],
-				componentCount: 35,
+				componentCount: 43,
 				utilCount: 24,
 
 				/* ---- 基础 ---- */
@@ -550,6 +663,14 @@
 				tagOptions2: ['一', '二', '三', '四', '五'],
 				steps: ['提交申请', '部门审批', '财务复核', '完成'],
 				stepCurrent: 2,
+
+				/* ---- 导航栏 / 标签栏 ---- */
+				tabbarItems: [
+					{ icon: '\ue621', text: '首页' },
+					{ icon: '\ue6bc', text: '待办' },
+					{ icon: '\ue621', text: '我的' },
+				],
+				tabbarValue: 0,
 
 				/* ---- 表单 ---- */
 				model: {
@@ -671,6 +792,56 @@
 				lecturerValue: '',
 				lecturerSearch: '',
 
+				/* ---- 附件 / 文件 / 单选列表 / 账号卡 / 多明细 ---- */
+				attachments: [
+					{ name: '接种单.xlsx', url: '' },
+					{ name: '身份证正面.jpg', url: '' },
+				],
+				fileList: [
+					{ id: 1, name: '2026年度员工体检汇总表.xlsx', type: 'xlsx', time: '2026-10-09 14:30' },
+					{ id: 2, name: '疫苗接种知情同意书.pdf', type: 'pdf', time: '2026-10-08 09:12' },
+					{ id: 3, name: '出差申请单.docx', type: 'docx', time: '2026-10-07 16:05' },
+					{ id: 4, name: '2026年10月报销附件', type: 'folder', time: '2026-10-06 11:20' },
+				],
+				fileChecked: [],
+				selectOptions: [
+					{ id: 1, text: '豆干炒牛肉' },
+					{ id: 2, text: '红烧牛肉' },
+					{ id: 3, text: '花椒炒香肠' },
+					{ id: 4, text: '尖椒鸡', badge: '推荐' },
+					{ id: 5, text: '小炒肉' },
+				],
+				selectValue: 5,
+				multiValue: [1, 3],
+				accounts: [
+					{ id: 1, name: '赵双双', sub: '财务部' },
+					{ id: 2, name: '李明', sub: '行政部' },
+					{ id: 3, name: '王芳', sub: '人力资源部' },
+				],
+				accountValue: 1,
+				detailList: [
+					{
+						title: '用餐一',
+						rows: [
+							{ label: '对方单位', text: '默沙东' },
+							{ label: '人员', text: '东东' },
+							{ label: '招待人数', text: '2' },
+							{ label: '陪同人员', text: '朱婷、陈安宁、薛迪' },
+							{ label: '用餐时间', text: '2024.01.03 08:00' },
+							{ label: '用餐标准', text: '300' },
+						],
+					},
+					{
+						title: '用餐二',
+						rows: [
+							{ label: '对方单位', text: '默沙东' },
+							{ label: '人员', text: '花花' },
+							{ label: '招待人数', text: '2' },
+							{ label: '用餐时间', text: '2024.01.03 18:00' },
+						],
+					},
+				],
+
 				/* ---- 工具 ---- */
 				now: new Date(),
 				cacheText: '',
@@ -704,6 +875,10 @@
 		log(title) {
 				uni.showToast({ title, icon: 'none' })
 				this.util.logger.debug('[demo]', title)
+			},
+			onTabbarChange(i, item) {
+				this.tabbarValue = i
+				this.log('tabbar → ' + item.text)
 			},
 
 			/* ---------- 表单 ---------- */
@@ -750,6 +925,36 @@
 			onPageListSearch(v) {
 				this.pageListSearch = v
 				this.log('page-list 筛选：' + JSON.stringify(v))
+			},
+
+			/* ---------- 附件 / 文件列表 / 单选列表 / 账号 / 明细 ---------- */
+			onFilePreview(file) {
+				this.log('预览附件：' + ((file && file.name) || file))
+			},
+			toggleFile(f) {
+				const i = this.fileChecked.indexOf(f.id)
+				if (i > -1) this.fileChecked.splice(i, 1)
+				else this.fileChecked.push(f.id)
+				this.log('文件多选 → ' + JSON.stringify(this.fileChecked))
+			},
+			onSelectChange(v, row) {
+				this.selectValue = v
+				this.log('单选 → ' + ((row && row.text) || v))
+			},
+			onMultiChange(v) {
+				this.multiValue = v
+				this.log('多选 → ' + JSON.stringify(v))
+			},
+			onAccountChange(v, item) {
+				this.accountValue = v
+				this.log('切换账号 → ' + ((item && item.name) || v))
+			},
+			onDetailAdd(i) {
+				const t = this.detailList[i] ? this.detailList[i].title : ''
+				this.log('在「' + t + '」后新增明细')
+			},
+			onDetailDelete(i) {
+				this.log('删除明细：' + this.detailList[i].title)
 			},
 
 			/* ---------- 日期 ---------- */
@@ -1171,5 +1376,30 @@
 		padding: 26rpx 0;
 
 		&__name { font-size: 30rpx; color: $black; }
+	}
+
+	/* ---------- 导航栏 / 标签栏 演示容器 ---------- */
+	.demo-nav-wrap,
+	.demo-tabbar-wrap {
+		overflow: hidden;
+		border-radius: 16rpx;
+		border: 1px solid $divider-color;
+	}
+
+	/* ---------- 自带白卡的组件：垫一层浅底以显出边界 ---------- */
+	.demo-panel {
+		padding: 24rpx;
+		border-radius: 16rpx;
+		background-color: $bg-color-base;
+	}
+
+	/* ---------- 文件列表项：容器底色透出即行间分隔线 ---------- */
+	.demo-file-list {
+		display: flex;
+		flex-direction: column;
+		gap: 2rpx;
+		overflow: hidden;
+		border-radius: 16rpx;
+		background-color: $divider-color;
 	}
 </style>

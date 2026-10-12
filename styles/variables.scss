@@ -5,9 +5,16 @@
  * 令牌体系（与 PC 端 melon-ui 对齐）：
  *   styles/theme/palette.scss   L1 原始层，由 melon-ui tokens.json 生成（勿手改）
  *   styles/theme/semantic.scss  L2 语义层 + 模板兼容变量名
+ *   styles/mixins/*.scss        原子视觉层（指示器 / 图标），零运行时开销
  *
  * 换肤只需改 melon-ui 的 tokens.json 后执行：
  *   node scripts/sync-theme.mjs
  * ========================================================================= */
 
 @import './theme/semantic.scss';
+
+/* 原子视觉 mixin：被任意组件 @include 复用。
+ * 不做成 Vue 组件——列表里每行一个指示器/图标时，组件化会在 mp-weixin
+ * 产生 N 个自定义组件实例（节点 + 通信开销），mixin 则是零开销。 */
+@import './mixins/indicator.scss';
+@import './mixins/icon.scss';

@@ -11,7 +11,7 @@
 			"path": "pages/demo/index",
 			"style": {
 				"navigationBarTitleText": "组件 Demo",
-				"navigationBarBackgroundColor": "#3B70DB",
+				"navigationBarBackgroundColor": "#5192FF",
 				"navigationBarTextStyle": "white",
 				"enablePullDownRefresh": false
 			}
@@ -20,7 +20,7 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uniapp-template",
-		"navigationBarBackgroundColor": "#F5F9FC",
-		"backgroundColor": "#F5F9FC"
+		"navigationBarBackgroundColor": "#F5F7FB",
+		"backgroundColor": "#F5F7FB"
 	}
 }
