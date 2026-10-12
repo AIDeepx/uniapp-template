@@ -194,3 +194,15 @@
 	border-right: $thick solid $color;
 	transform: rotate(45deg);
 }
+
+/* ---------- 格子条（等宽序列中的单格） ----------
+ * 用于「N 个等宽格子表达状态」的形态：座位占用、工位、库存格位、排队号等。
+ * 激活色传 $color-brand，空闲色传 $gray-150（≈设计稿 #E9EDF2）。
+ */
+@mixin cell-bar($height: 36rpx, $radius: 2rpx, $color: $gray-150) {
+	width: 100%;
+	height: $height;
+	border-radius: $radius;
+	background-color: $color;
+	transition: background-color 0.2s;
+}

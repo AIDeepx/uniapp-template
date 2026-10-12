@@ -503,6 +503,56 @@
 						只读详情页只需 m-group + m-desc-list，不传 actionText 即可不渲染任何增删入口。
 					</view>
 				</view>
+			<!-- 格子序列：车辆座位占用（设计稿「车辆运行情况」页） -->
+				<view class="card">
+					<view class="card__title">m-cell-seq 格子序列</view>
+					<view v-for="v in vehicles" :key="v.plate" class="vehicle">
+						<view class="vehicle__head">
+							<view class="vehicle__meta">
+								<text class="vehicle__plate">{{ v.plate }}</text>
+								<m-tag>{{ v.model }}</m-tag>
+								<m-tag>{{ v.seats }}</m-tag>
+							</view>
+							<m-tag :type="v.disabled ? 'error' : 'success'">{{ v.disabled ? '维修中' : '正常运行' }}</m-tag>
+						</view>
+						<m-cell-seq
+							:count="v.total"
+							:active-list="v.active"
+							:labels="v.labels"
+							:start="v.start"
+							:disabled="v.disabled"
+							@item-click="onSeatClick(v)" />
+						<view class="vehicle__foot">
+							<m-button v-if="!v.disabled" block @click="log('确认派车 → ' + v.plate)">确认派车</m-button>
+							<m-button v-else block disabled>确认派车</m-button>
+						</view>
+					</view>
+					<view class="hint">
+						座位占用只读态：<text class="cell-legend"><text class="cell-legend__bar is-active"></text>已占用</text>
+						<text class="cell-legend"><text class="cell-legend__bar"></text>空闲</text>；维修中车辆 disabled 全部回落为空闲灰且不可点
+					</view>
+				</view>
+
+				<!-- 格子序列：会议室选座（可点选场景） -->
+				<view class="card">
+					<view class="card__title">m-cell-seq 可点选场景</view>
+					<view class="demo-panel">
+						<m-cell-seq
+							:count="18"
+							:active-list="roomTaken"
+							:off-list="roomOff"
+							:labels="true"
+							@item-click="onRoomSeatClick" />
+					</view>
+					<view class="row">
+						<m-button ghost @click="log('重置选座')">重置</m-button>
+						<m-button ghost @click="onSeatAllFree">全部空闲</m-button>
+					</view>
+					<view class="hint">
+						同一组件用于会议室选座：已占用 activeList / 不可用 offList / 可点选 item-click。
+						数据由父级持有，组件本身无内部选中态（受控用法）。
+					</view>
+				</view>
 			</view>
 
 			<!-- ============================================================
@@ -655,7 +705,7 @@
 					{ key: 'biz', label: '业务' },
 					{ key: 'utils', label: '工具' },
 				],
-				componentCount: 43,
+				componentCount: 44,
 				utilCount: 24,
 
 				/* ---- 基础 ---- */
@@ -792,7 +842,14 @@
 				lecturerValue: '',
 				lecturerSearch: '',
 
-				/* ---- 附件 / 文件 / 单选列表 / 账号卡 / 多明细 ---- */
+				/* ---- 附件 / 文件 / 选项 / 分组 / 详情 / 格子序列 ---- */
+				vehicles: [
+					{ plate: '渝A156344', model: '商务车', seats: '5座', total: 17, start: 7, labels: true, active: [0, 1, 2, 3, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16], disabled: false },
+					{ plate: '渝A156345', model: '商务车', seats: '7座', total: 17, start: 7, labels: true, active: [4, 5, 9, 10], disabled: false },
+					{ plate: '渝A156347', model: '商务车', seats: '7座', total: 17, start: 7, labels: true, active: [], disabled: true },
+				],
+				roomTaken: [1, 2, 5, 6],
+				roomOff: [0, 17],
 				attachments: [
 					{ name: '接种单.xlsx', url: '' },
 					{ name: '身份证正面.jpg', url: '' },
@@ -955,6 +1012,20 @@
 			},
 			onDetailDelete(i) {
 				this.log('删除明细：' + this.detailList[i].title)
+			},
+			onSeatClick(v) {
+				this.log(v.plate + ' 座位点击（只读态不回写）')
+			},
+			onRoomSeatClick(i, active) {
+				const idx = this.roomTaken.indexOf(i)
+				if (idx > -1) this.roomTaken.splice(idx, 1)
+				else this.roomTaken.push(i)
+				this.roomTaken.sort((a, b) => a - b)
+				this.log('会议室座位 ' + (i + 1) + (active ? ' → 释放' : ' → 占用'))
+			},
+			onSeatAllFree() {
+				this.roomTaken = []
+				this.log('会议室已全部空闲')
 			},
 
 			/* ---------- 日期 ---------- */
@@ -1401,5 +1472,60 @@
 		overflow: hidden;
 		border-radius: 16rpx;
 		background-color: $divider-color;
+	}
+
+	/* ---------- 车辆卡（m-cell-seq 演示容器） ---------- */
+	.vehicle {
+		padding: 24rpx;
+		border-radius: 16rpx;
+		background-color: $bg-color-container;
+
+		& + & {
+			margin-top: 24rpx;
+		}
+
+		&__head {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 20rpx;
+		}
+
+		&__meta {
+			display: flex;
+			align-items: center;
+		}
+
+		&__plate {
+			margin-right: 16rpx;
+			font-size: 32rpx;
+			font-weight: 700;
+			color: $text-color-primary;
+		}
+
+		&__foot {
+			margin-top: 24rpx;
+		}
+	}
+
+	/* ---------- 图例 ---------- */
+	.cell-legend {
+		display: inline-flex;
+		align-items: center;
+		margin: 0 20rpx 0 8rpx;
+		font-size: 22rpx;
+		color: $gray-400;
+
+		&__bar {
+			width: 16rpx;
+			height: 36rpx;
+			margin-right: 8rpx;
+			border-radius: 2rpx;
+			background-color: $gray-150;
+
+			&.is-active {
+				background-color: $color-brand;
+			}
+		}
 	}
 </style>
