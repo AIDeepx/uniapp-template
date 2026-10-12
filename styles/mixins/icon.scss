@@ -186,7 +186,7 @@
 }
 
 /* ---------- 右箭头 ---------- */
-@mixin icon-arrow($size: 16rpx, $thick: 3rpx, $color: $gray-300) {
+@mixin icon-arrow($size: 16rpx, $thick: 3rpx, $color: $border-color-base) {
 	flex-shrink: 0;
 	width: $size;
 	height: $size;

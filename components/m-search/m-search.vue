@@ -133,7 +133,7 @@
 				padding-left: 70rpx;
 				color: $black9;
 				box-sizing: border-box;
-				background-color: $gray-100;
+				background-color: $bg-color-input;
 			}
 		}
 		.other {
@@ -146,7 +146,7 @@
 			text-align: center;
 			border-radius: 70rpx;
 			font-size: 26rpx;
-			background-color: $gray-100;
+			background-color: $bg-color-input;
 			border: 1px solid $blue;
 			overflow: hidden;
 			&.active {
@@ -219,8 +219,8 @@
 						color: $black5;
 						text-align: center;
 						overflow: hidden;
-						border: 1px solid $gray-100;
-						background-color: $gray-100;
+						border: 1px solid $bg-color-input;
+						background-color: $bg-color-input;
 						&.colspan-2 {
 							width: calc(100% - 20rpx);
 						}

@@ -19,7 +19,7 @@
         "template" : "index.html"
     },
     "mp-weixin" : {
-        "appid" : "",
+        "appid" : null,
         "setting" : {
             "urlCheck" : false,
             "es6" : true,

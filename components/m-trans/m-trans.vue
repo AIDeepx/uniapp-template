@@ -1,6 +1,6 @@
 <template>
 	<view class="zfui-trans" v-if="trans.length > 0">
-		<view class="trans-title">审批进程</view>
+		<view class="trans-title">{{ title }}</view>
 		<view :class="['trans-tree', i == trans.length - 1 ? 'active' : '']" v-for="(item, i) in trans" :key="i">
 			<view class="trans-datetime">
 				<view :class="['trans-time', i == trans.length - 1 ? 'trans-now' : '']">{{ item.D_TransactionBegin.split(' ')[0] }}</view>
@@ -8,15 +8,16 @@
 			</view>
 			<view class="trans-progress"></view>
 			<view class="trans-info">
-				<view :class="['trans-position', i == trans.length - 1 ? '' : 'old']">{{ item.C_QueueName }}</view>
+				<view class="trans-info-head">
+					<view :class="['trans-position', i == trans.length - 1 ? '' : 'old']">{{ item.C_QueueName }}</view>
+					<!-- §6.19 当前节点旁挂「办理中」标签：浅橙底 + 橙字 -->
+					<text v-if="i == trans.length - 1" class="trans-doing">办理中</text>
+				</view>
 				<view class="trans-info-content">
 					<view class="trans-info-content--name">{{ item.blr || '' }}</view>
 					<view v-if="i != 0" :class="['trans-info-content--status', item.action == '同意' ? 'info' : 'error']">{{ item.action }}</view>
 				</view>
 				<view class="trans-info-reason" v-show="item.C_TransactionComment">理由：{{ item.C_TransactionComment }}</view>
-				<!-- <view class="trans-complete">
-					已完成
-				</view> -->
 			</view>
 		</view>
 	</view>
@@ -31,6 +32,8 @@ export default {
 		bid: { type: [String, Number], default: '' },
 		// 可选：外部直接灌入审批流数据，便于在无后端环境展示
 		data: { type: Array, default: () => [] },
+		// 卡片标题（§6.19 审批进度 / 审批进程）
+		title: { type: String, default: '审批进程' },
 	},
 	mounted() {
 		if (this.data && this.data.length) this.trans = this.data;
@@ -71,55 +74,60 @@ export default {
 
 <style lang="scss" scoped>
 .zfui-trans {
-	margin-top: 30rpx;
+	/* §6.19 白卡 8px 圆角包裹 */
+		margin-top: 24rpx;
 	padding: 28rpx 32rpx;
 	box-sizing: border-box;
+	border-radius: $radius-lg;
 	background-color: $white;
 	.trans-title {
-		font-size: 32rpx;
+		font-size: 30rpx;
 		color: $text-color-primary;
-		font-weight: 800;
+		font-weight: 600; // Semibold
 	}
 	.trans-tree {
 		display: flex;
 		justify-content: space-between;
 		margin-top: 30rpx;
 		.trans-datetime {
-			width: 150rpx;
-			font-size: 24rpx;
+			/* §6.19 时间戳列宽 66px → 132rpx，右对齐 */
+			width: 132rpx;
+			flex-shrink: 0;
+			font-size: 22rpx;
 			color: $black9;
 			text-align: right;
 			.trans-time {
 				margin-top: 20rpx;
 			}
 			.trans-now {
-				font-size: 26rpx;
+				font-size: 22rpx;
 				color: $color-brand;
 			}
 		}
 		.trans-progress {
-			width: 60rpx;
+			width: 48rpx;
+			flex-shrink: 0;
 			position: relative;
 			&::before {
 				position: absolute;
-				top: 10rpx;
+				top: 6rpx;
 				left: 50%;
-				width: 10rpx;
-				height: 10rpx;
-				margin-left: -5rpx;
+				/* §6.19 节点圆点 12px → 24rpx */
+				width: 24rpx;
+				height: 24rpx;
+				margin-left: -12rpx;
 				border-radius: 50%;
 				content: '';
-				background-color: $gray-200;
+				background-color: $border-color-base;
 			}
 			&::after {
 				position: absolute;
-				top: 20rpx;
+				top: 32rpx;
 				left: 50%;
 				width: 1px;
 				height: calc(100% + 20rpx);
-				border-radius: 50%;
 				content: '';
-				background-color: $gray-200;
+				background-color: $border-color-base;
 			}
 		}
 		&:last-child {
@@ -132,10 +140,7 @@ export default {
 		&.active {
 			.trans-progress {
 				&::before {
-					width: 16rpx;
-					height: 16rpx;
 					background-color: $color-brand;
-					margin-left: -8rpx;
 				}
 			}
 		}
@@ -151,13 +156,29 @@ export default {
 		}
 		.trans-info {
 			flex: 1;
+			min-width: 0;
+			.trans-info-head {
+				display: flex;
+				align-items: center;
+				margin-bottom: 10rpx;
+			}
 			.trans-position {
 				font-size: 24rpx;
 				color: $color-brand;
-				margin-bottom: 10rpx;
 				&.old {
 					color: $black5;
 				}
+			}
+			/* §6.19「办理中」标签：浅橙底 + 橙字，4px 圆角，高 20px */
+			.trans-doing {
+				margin-left: 12rpx;
+				padding: 0 12rpx;
+				height: 40rpx;
+				line-height: 40rpx;
+				border-radius: $radius-md;
+				font-size: 22rpx;
+				color: $color-warning;
+				background-color: $orange-50;
 			}
 			.trans-info-content {
 				display: flex;

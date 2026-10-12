@@ -187,7 +187,7 @@
 		}
 
 		&__arrow {
-			@include icon-arrow(16rpx, 3rpx, $gray-300);
+			@include icon-arrow(16rpx, 3rpx, $border-color-base);
 
 			margin-left: 24rpx;
 		}

@@ -25,6 +25,10 @@ const probe = `
   color: $green;
   color: $orange;
   color: $white;
+  border-top: 1px solid $divider-color;
+  background-color: $bg-color-input;
+  border: 1px solid $border-color-base;
+  color: $text-color-placeholder;
   padding-bottom: $safe-bottom;
 }
 `
@@ -53,7 +57,11 @@ try {
     ['border-radius: 8rpx', '圆角已换算为 rpx'],
     ['font-size: 28rpx', '字号已换算为 rpx'],
     ['color: #F5222D', '错误色对齐 enterprise-design-system skill'],
-    ['color: #16C797', '成功色来自 melon-ui green-500'],
+    ['color: #16C797', '成功色来自 melon-ui green-500（已裁决保留）'],
+    ['border-top: 1px solid #EBEEF5', '分隔线对齐 skill #EBEEF5'],
+    ['background-color: #F7F8FA', '输入 / 搜索底对齐 skill #F7F8FA'],
+    ['border: 1px solid #D9D9D9', '描边灰独立令牌 #D9D9D9（与占位灰拆分）'],
+    ['color: #BFBFBF', '占位灰仍为 #BFBFBF（未被描边灰覆盖）'],
   ]
   let bad = 0
   for (const [needle, desc] of checks) {

@@ -1,5 +1,5 @@
 <template>
-	<view class="z-radio" @click="check">
+	<view class="z-radio" :class="'is-' + direction" @click="check">
 		<text :class="{
 			'z-radio-icon': true,
 			'iconfont': true,
@@ -21,6 +21,8 @@
 				type: Boolean,
 				default: () => false,
 			},
+			// 图标位置：left（默认，表单横排）/ right（选择页「文字左 + radio 右」，对齐 m-checkbox）
+			direction: { type: String, default: 'left' },
 		},
 		inject: {
 			radioContext: {
@@ -50,9 +52,21 @@
 
 <style lang="scss" scoped>
 	.z-radio {
+		display: inline-flex;
+		align-items: center;
 		vertical-align: middle;
+
+		/* direction="right"：图标移到文字右侧（§6.9 选择页） */
+		&.is-right {
+			.z-radio-text {
+				margin-left: 0;
+				margin-right: 8rpx;
+			}
+		}
+
 		.z-radio-icon {
 			display: inline-block;
+			flex-shrink: 0;
 			color: $gray-300;
 			font-size: 48rpx;
 			line-height: 48rpx;

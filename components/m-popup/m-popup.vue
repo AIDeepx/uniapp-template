@@ -15,6 +15,13 @@
 				<view class="m-popup__body">
 					<slot name="content" />
 				</view>
+				<!-- 底部操作区（§6.10）：取消（白底灰字胶囊）+ 确认（蓝底白字胶囊），等宽并排间距 12px -->
+				<view v-if="showFooter" class="m-popup__footer">
+					<slot name="footer">
+						<m-button ghost round class="m-popup__btn" @click="onCancel">{{ cancelText }}</m-button>
+						<m-button round class="m-popup__btn" @click="onConfirm">{{ confirmText }}</m-button>
+					</slot>
+				</view>
 			</view>
 		</uni-popup>
 	</view>
@@ -37,11 +44,21 @@
 			border: { type: Boolean, default: true },
 			// 弹出方式：center（默认）| bottom | top | left | right
 			type: { type: String, default: 'center' },
+			// 底部操作区：传 confirmText 才渲染（也可用 footer 插槽完全自定义）
+			cancelText: { type: String, default: '取消' },
+			confirmText: { type: String, default: '' },
+			// 确认按钮 loading（如提交中）
+			confirmLoading: { type: Boolean, default: false },
+			// 确认按钮禁用
+			confirmDisabled: { type: Boolean, default: false },
 		},
 		data() {
 			return { visible: false }
 		},
 		computed: {
+			showFooter() {
+				return Boolean(this.confirmText || this.$slots.footer)
+			},
 			panelClass() {
 				return {
 					'm-popup__panel--border': this.border,
@@ -72,6 +89,8 @@
 				this.doOpen()
 			},
 			close() { this.doClose() },
+			onCancel() { this.$emit('cancel'); this.close() },
+			onConfirm() { this.$emit('confirm') },
 			doOpen() {
 				const p = this.$refs.popup
 				if (!p) {
@@ -121,9 +140,9 @@
 
 		/* uni-popup 的 .uni-popup__wrapper 是 flex 收缩项，宽度不确定，
 		   这里不能用 calc(100% - 64rpx)（百分比会塌陷成窄条）；
-		   容器恒为全屏 fixed，rpx 即视口单位，故直接用确定值 750rpx - 64rpx */
+		   容器恒为全屏 fixed，rpx 即视口单位。§6.10 居中弹窗宽 ≈ 屏宽 − 48px → 654rpx */
 		&__panel {
-			width: 686rpx;
+			width: 654rpx;
 			max-height: 80vh;
 			box-sizing: border-box;
 			background: $form-card-bg;
@@ -142,24 +161,27 @@
 			}
 		}
 
+		/* §6.10 标题：14px #999999 左上（非居中深色） */
 		&__head {
 			position: relative;
-			height: 88rpx;
-			line-height: 88rpx;
-			text-align: center;
+			min-height: 88rpx;
+			padding: 24rpx 32rpx 8rpx;
+			box-sizing: border-box;
 			flex-shrink: 0;
 
 			.m-popup__title {
-				font-size: 30rpx;
-				color: $black;
+				padding-right: 72rpx;
+				font-size: 28rpx; // 14px
+				line-height: 40rpx;
+				color: $black9;
 			}
 			.m-popup__close {
 				position: absolute;
-				right: 32rpx;
-				top: 0;
-				line-height: 88rpx;
+				right: 24rpx;
+				top: 24rpx;
+				line-height: 40rpx;
 				font-size: 32rpx;
-				color: $black9;
+				color: $gray-300;
 			}
 		}
 
@@ -169,6 +191,20 @@
 			padding: 24rpx 32rpx;
 			box-sizing: border-box;
 			overflow-y: auto;
+		}
+
+		/* 底部操作区：等宽并排，间距 12px */
+		&__footer {
+			display: flex;
+			flex-shrink: 0;
+			gap: 24rpx;
+			padding: 16rpx 32rpx 32rpx;
+			box-sizing: border-box;
+
+			.m-popup__btn {
+				flex: 1;
+				margin: 0;
+			}
 		}
 	}
 </style>

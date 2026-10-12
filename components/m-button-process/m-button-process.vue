@@ -1,8 +1,9 @@
 <template>
 	<view class="m-button-process">
-		<m-button type="delete" ghost block @click="bindBatchHandle(false)">不同意</m-button>
-		<m-space width="20rpx"></m-space>
-		<m-button block @click="bindBatchHandle(true)">同意</m-button>
+		<!-- §6.8 审批对按钮：拒绝（橙底白字实心）+ 同意（蓝底白字），各半、间距 12px -->
+		<m-button type="delete" block @click="bindBatchHandle(false)">{{ rejectText }}</m-button>
+		<m-space width="24rpx"></m-space>
+		<m-button block @click="bindBatchHandle(true)">{{ agreeText }}</m-button>
 	</view>
 </template>
 
@@ -14,6 +15,9 @@
 			trids: { type: [String, Number], default: '' },
 			// 「不同意」时跳转的页面；为空则不跳转，仅派发事件
 			rejectUrl: { type: String, default: '' },
+			// 按钮文案（设计稿 §6.8 用「拒绝 / 同意」）
+			rejectText: { type: String, default: '拒绝' },
+			agreeText: { type: String, default: '同意' },
 		},
 		methods: {
 			bindBatchHandle(status) {

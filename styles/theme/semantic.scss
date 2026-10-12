@@ -50,12 +50,17 @@ $bg-color-container: $white;     //卡片/面板
 $bg-color-mask:      rgba(0, 0, 0, 0.6); // 遮罩
 
 /* ---------- 边框 ---------- */
-$border-color-base:$gray-200;
+/* $border-color-base = 描边灰（$gray-250 #D9D9D9），用于次按钮 / radio / 虚线框 / 输入框描边；
+   占位符文字请用 $text-color-placeholder（$gray-200 #BFBFBF），两者语义已拆分。 */
+$border-color-base: $gray-250;
 $border-color-light:      $gray-150;
 $border-color-brand:      $blue-500;
 $border-color-error:      $red-500;
 
 $divider-color: $gray-150;
+
+/* 输入 / 搜索框底色 */
+$bg-color-input:    $gray-100;
 
 /* ---------- 图标 ---------- */
 $icon-color-primary:   $gray-500;
@@ -106,7 +111,8 @@ $safe-bottom: env(safe-area-inset-bottom);
 $safe-top:    env(safe-area-inset-top);
 
 /* ---------- 表单组件（设计令牌对齐 Figma） ---------- */
-$form-row-min-height: 108rpx;   // 54px → rpx，舒适触控高度
+/* §6.6 列表 / 表单行高 44–48px → 88–96rpx；取上限 96rpx 保证触控舒适 */
+$form-row-min-height: 96rpx;
 $form-label-size:     28rpx;    // 行标签
 $form-value-size:     30rpx;    // 行取值
 $form-card-radius:    $radius-lg;   // 分组圆角 16rpx

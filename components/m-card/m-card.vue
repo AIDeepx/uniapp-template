@@ -14,6 +14,10 @@
 			</view>
 		</view>
 		<slot />
+		<!-- §6.5 底行 meta：申请人 / 时间两端对齐 -->
+		<view v-if="$slots.meta" class="m-card__meta">
+			<slot name="meta" />
+		</view>
 	</view>
 </template>
 
@@ -72,7 +76,7 @@
 			padding-bottom: 24rpx;
 			flex: 1;
 			font-size: 30rpx;
-			font-weight: bold;
+			font-weight: 500; // §6.5 Medium(500)
 			color: $text-color-primary;
 			border-bottom: 1px solid $divider-color;
 		}
@@ -90,5 +94,16 @@
 		}
 		&__label { color: $text-color-tertiary; flex-shrink: 0; }
 		&__text { flex: 1; text-align: right; color: $text-color-primary; }
+
+		/* §6.5 底行 meta：申请人 xxx 与时间两端对齐，12px 辅助灰 */
+		&__meta {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-top: 24rpx;
+			font-size: 24rpx;
+			line-height: 34rpx;
+			color: $text-color-tertiary;
+		}
 	}
 </style>

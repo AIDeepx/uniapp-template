@@ -91,7 +91,7 @@
 		position: relative;
 		width: 100%;
 		display: flex;
-		font-size: 28rpx;
+		font-size: 30rpx; // §6.2 15px
 		background-color: $white;
 		
 		&.border::after {
@@ -123,7 +123,7 @@
 				bottom: 0;
 				left: 50%;
 				width: 60rpx;
-				height: 4rpx;
+				height: 6rpx; // §6.2 3px
 				content: '';
 				transform: translate(-50%, 50%);
 				background-color: $blue;

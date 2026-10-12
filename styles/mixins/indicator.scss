@@ -10,8 +10,8 @@
  *   .row__radio.is-on { @include indicator-on(48rpx); }
  * ========================================================================= */
 
-/* 未选中态：空心描边 */
-@mixin indicator($size: 48rpx, $radius: 50%, $border: $gray-300) {
+/* 未选中态：空心描边（默认用描边灰 $border-color-base，对齐设计稿 #D9D9D9） */
+@mixin indicator($size: 48rpx, $radius: 50%, $border: $border-color-base) {
 	position: relative;
 	flex-shrink: 0;
 	width: $size;

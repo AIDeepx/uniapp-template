@@ -136,12 +136,19 @@
 				<view class="card">
 					<view class="card__title">m-tag 状态语义 · 反馈组件</view>
 					<view class="row">
-						<m-tag>默认(蓝)</m-tag>
+						<m-tag>待审批(蓝)</m-tag>
 						<m-tag type="success">已审核(绿)</m-tag>
 						<m-tag type="warning">拒绝(橙)</m-tag>
 						<m-tag type="error">加急(红)</m-tag>
+						<m-tag type="info">未发起(灰)</m-tag>
+						<m-tag border>描边档</m-tag>
+					</view>
+					<view class="hint">
+						§6.4 浅底 + 主色字、**无边框**（border 默认 false）；新增 info 灰档承载「未发起 / 未开始」
 					</view>
 					<m-space height="24rpx" />
+					<m-banner title="本月报销汇总" desc="共 12 单待审" :stats="bannerStats" />
+					<m-space height="20rpx" />
 					<m-banner title="欢迎使用初始化模板" desc="渐变 Banner · 全 App 唯一强渐变">
 						<m-button ghost>查看</m-button>
 					</m-banner>
@@ -151,8 +158,10 @@
 					<m-result type="success" title="提交成功" desc="我们会尽快处理" />
 					<m-space height="20rpx" />
 					<m-result type="error" title="提交失败" desc="请稍后重试" />
-					<view class="hint">m-fab 为右下角固定悬浮按钮（见页面右下角），点击触发事件</view>
-					<m-fab @click="log('FAB 点击')" />
+					<view class="hint">
+						m-fab 为右下角固定悬浮按钮：默认加号图标；传 text 切换为文字胶囊（如「新增」）
+					</view>
+					<m-fab @click="log('FAB 图标模式')" />
 				</view>
 			</view>
 
@@ -230,6 +239,14 @@
 						<m-checkbox :value="'a'">阅读</m-checkbox>
 						<m-checkbox :value="'b'">运动</m-checkbox>
 					</m-checkbox-group>
+
+					<m-space height="20rpx" />
+
+					<view class="hint">direction="right"：文字左 + 圆点右（§6.9 选择页形态）</view>
+					<m-radio-group :value="model.radioSingle" @change="model.radioSingle = $event">
+						<m-radio :value="1" direction="right">男</m-radio>
+						<m-radio :value="2" direction="right">女</m-radio>
+					</m-radio-group>
 					<view class="hint">
 						当前：单选 {{ model.radioSingle || '（无）' }} / 多选 {{ JSON.stringify(model.checkboxSingle) }}
 					</view>
@@ -278,11 +295,27 @@
 								<text class="popup-head__close" @click="popupCustom = false">关闭</text>
 							</view>
 						</template>
-						<template v-slot:content>
-							<view class="popup-body">使用 v-slot:head 替换了默认标题栏。</view>
-						</template>
-					</m-popup>
+<template v-slot:content>
+						<view class="popup-body">使用 v-slot:head 替换了默认标题栏。</view>
+					</template>
+				</m-popup>
+
+				<m-space height="24rpx" />
+
+				<m-popup v-model="popupConfirm" title="新增菜品名称" confirm-text="确认" @confirm="onPopupConfirm">
+					<m-button ghost>带底部操作区</m-button>
+					<template v-slot:content>
+						<view class="popup-body">
+							§6.10 标题 14px 灰字左上、面板宽 = 屏宽 − 48px；底部内置「取消（白）/ 确认（蓝）」等宽胶囊按钮。
+						</view>
+					</template>
+				</m-popup>
+
+				<m-space height="20rpx" />
+				<view class="hint">
+					传 confirm-text 即渲染内置底部操作区（emit cancel / confirm）；需要完全自定义时用 footer 插槽。
 				</view>
+			</view>
 
 				<view class="card">
 					<view class="card__title">m-tabs 标签页</view>
@@ -311,7 +344,12 @@
 						:status="1"
 						:color-map="colorMap"
 						:desc="cardDesc"
-						@click="log('m-card 点击')" />
+						@click="log('m-card 点击')">
+						<template v-slot:meta>
+							<text>申请人：张三</text>
+							<text>2026-10-09</text>
+						</template>
+					</m-card>
 
 					<m-space height="20rpx" />
 
@@ -708,11 +746,15 @@
 				componentCount: 44,
 				utilCount: 24,
 
-				/* ---- 基础 ---- */
-				tagOptions: ['轻量', '快速'],
-				tagOptions2: ['一', '二', '三', '四', '五'],
-				steps: ['提交申请', '部门审批', '财务复核', '完成'],
-				stepCurrent: 2,
+/* ---- 基础 ---- */
+			tagOptions: ['轻量', '快速'],
+			tagOptions2: ['一', '二', '三', '四', '五'],
+			steps: ['提交申请', '部门审批', '财务复核', '完成'],
+			stepCurrent: 2,
+			bannerStats: [
+				{ value: '12', label: '待审' },
+				{ value: '38', label: '已通过' },
+			],
 
 				/* ---- 导航栏 / 标签栏 ---- */
 				tabbarItems: [
@@ -759,8 +801,9 @@
 				linkUrl: '/pages/demo/index',
 
 				/* ---- 弹层 ---- */
-				popupVisible: false,
-				popupCustom: false,
+popupVisible: false,
+			popupCustom: false,
+			popupConfirm: false,
 				tabValue: 'a',
 				tabData: [
 					{ value: 'a', text: '选项A' },
@@ -982,6 +1025,10 @@
 			onPageListSearch(v) {
 				this.pageListSearch = v
 				this.log('page-list 筛选：' + JSON.stringify(v))
+			},
+			onPopupConfirm() {
+				this.popupConfirm = false
+				this.log('m-popup 确认')
 			},
 
 			/* ---------- 附件 / 文件列表 / 单选列表 / 账号 / 明细 ---------- */

@@ -190,7 +190,7 @@
 			// 继续上传：白底 + 1px 虚线描边
 			&.is-add {
 				background-color: $bg-color-container;
-				border: 1px dashed $gray-300;
+				border: 1px dashed $border-color-base;
 			}
 		}
 

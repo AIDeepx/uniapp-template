@@ -42,8 +42,8 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			width: 120rpx;
-			height: 120rpx;
+			width: 144rpx; // §6.15 72px
+			height: 144rpx;
 			border-radius: 50%;
 
 			&.is-success {
@@ -60,7 +60,7 @@
 			}
 		}
 		&__symbol {
-			font-size: 64rpx;
+			font-size: 72rpx; // 随 144rpx 圆放大
 			font-weight: bold;
 			line-height: 1;
 

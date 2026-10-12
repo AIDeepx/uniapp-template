@@ -1,5 +1,5 @@
 <template>
-	<view :class="['tag', type && type !== 'default' ? 'tag--' + type : '']">
+	<view :class="['tag', type && type !== 'default' ? 'tag--' + type : '', border ? 'has-border' : '']">
 		<slot />
 	</view>
 </template>
@@ -14,8 +14,11 @@
 			 *  success             —— 已审核（绿）
 			 *  warning             —— 拒绝（橙）
 			 *  error               —— 加急 / 失败（红）
+			 *  info                —— 未发起 / 未开始（灰）
 			 */
 			type: { type: String, default: 'default' },
+			// 是否描边（设计稿 §6.4 为浅底 + 主色字、无边框；默认无描边）
+			border: { type: Boolean, default: false },
 		},
 	}
 </script>
@@ -28,25 +31,42 @@
 	display: inline-block;
 	font-size: 24rpx;
 	box-sizing: border-box;
-	border: 1px solid $blue-200;
 	border-radius: $radius-md;
 	background-color: $blue-50;
 	color: $color-brand;
 
+	&.has-border {
+		border: 1px solid $blue-200;
+	}
+
 	&--success {
-		border-color: $green-200;
 		background-color: $green-50;
 		color: $color-success;
+		&.has-border {
+			border-color: $green-200;
+		}
 	}
 	&--warning {
-		border-color: $orange-200;
 		background-color: $orange-50;
 		color: $color-warning;
+		&.has-border {
+			border-color: $orange-200;
+		}
 	}
 	&--error {
-		border-color: $red-200;
 		background-color: $red-50;
 		color: $color-error;
+		&.has-border {
+			border-color: $red-200;
+		}
+	}
+	/* 未发起 / 未开始 / 默认：灰档 */
+	&--info {
+		background-color: $gray-150;
+		color: $text-color-tertiary;
+		&.has-border {
+			border-color: $border-color-base;
+		}
 	}
 }
 </style>

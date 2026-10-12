@@ -133,7 +133,7 @@
 			text-align: center;
 			font-size: 40rpx;
 			color: $gray-300;
-			border: 1px dashed $gray-300;
+			border: 1px dashed $border-color-base;
 			border-radius: $radius-lg;
 		}
 	}

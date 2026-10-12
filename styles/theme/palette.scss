@@ -10,6 +10,9 @@
 //    enterprise-design-system skill 规范（#F5222D / #F5F7FB / #262626 / #595959 /
 //    #999999 / #BFBFBF），品牌蓝等保留 melon-ui 值。若重跑 sync-theme.mjs，
 //    需同步改上游 melon-ui tokens.json 或本段，否则会被覆盖回 melon-ui 原值。
+//
+//    另有一组「令牌精度收口」override：分隔线 #EBEEF5、输入底 #F7F8FA，
+//    并新增 $gray-250（描边灰 #D9D9D9）以拆分 $gray-200 的双重语义。
 // =========================================================================
 
 /* ---------- 原始色阶 ---------- */
@@ -46,9 +49,10 @@ $green-700: #0B8F85;
 $green-800: #077173;
 $green-900: #04545F;
 $green-950: #032C31;
-$gray-100: #F9FBFF;
-$gray-150: #E5EBF0;
+$gray-100: #F7F8FA; // [override] 对齐 skill 输入 / 搜索底 #F7F8FA
+$gray-150: #EBEEF5; // [override] 对齐 skill 分隔线 #EBEEF5
 $gray-200: #BFBFBF; // [override] 对齐 skill 占位灰
+$gray-250: #D9D9D9; // [新增] 描边灰（次按钮 / radio / 虚线框），与占位灰 $gray-200 拆分
 $gray-300: #B6BFC3;
 $gray-350: #999999; // [override] 对齐 skill 辅助灰
 $gray-400: #595959; // [override] 对齐 skill 正文次色
