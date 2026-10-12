@@ -110,6 +110,29 @@
 						<m-button ghost @click="stepCurrent = stepCurrent < steps.length ? stepCurrent + 1 : steps.length">下一步</m-button>
 					</view>
 				</view>
+
+				<!-- 标签语义 + 反馈类组件 -->
+				<view class="card">
+					<view class="card__title">m-tag 状态语义 · 反馈组件</view>
+					<view class="row">
+						<m-tag>默认(蓝)</m-tag>
+						<m-tag type="success">已审核(绿)</m-tag>
+						<m-tag type="warning">拒绝(橙)</m-tag>
+						<m-tag type="error">加急(红)</m-tag>
+					</view>
+					<m-space height="24rpx" />
+					<m-banner title="欢迎使用初始化模板" desc="渐变 Banner · 全 App 唯一强渐变">
+						<m-button ghost>查看</m-button>
+					</m-banner>
+					<m-space height="24rpx" />
+					<m-empty text="暂无数据" />
+					<m-space height="24rpx" />
+					<m-result type="success" title="提交成功" desc="我们会尽快处理" />
+					<m-space height="20rpx" />
+					<m-result type="error" title="提交失败" desc="请稍后重试" />
+					<view class="hint">m-fab 为右下角固定悬浮按钮（见页面右下角），点击触发事件</view>
+					<m-fab @click="log('FAB 点击')" />
+				</view>
 			</view>
 
 			<!-- ============================================================
@@ -519,7 +542,7 @@
 					{ key: 'biz', label: '业务' },
 					{ key: 'utils', label: '工具' },
 				],
-				componentCount: 31,
+				componentCount: 35,
 				utilCount: 24,
 
 				/* ---- 基础 ---- */

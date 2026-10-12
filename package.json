@@ -22,5 +22,8 @@
     "husky": "^9.1.0",
     "prettier": "^3.3.0",
     "sass": "^1.77.0"
+  },
+  "dependencies": {
+    "pinia": "^2.2.0"
   }
 }

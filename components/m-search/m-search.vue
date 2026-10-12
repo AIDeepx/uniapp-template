@@ -120,15 +120,15 @@
 				position: absolute;
 				top: 0;
 				left: 20rpx;
-				line-height: 70rpx;
+				line-height: 72rpx;
 				font-size: 40rpx;
 				color: $black9;
 				z-index: 10;
 			}
 			input {
 				width: 100%;
-				height: 70rpx;
-				line-height: 70rpx;
+				height: 72rpx;
+				line-height: 72rpx;
 				font-size: 24rpx;
 				padding-left: 70rpx;
 				color: $black9;
@@ -140,8 +140,8 @@
 			position: relative;
 			padding: 0 64rpx 0 32rpx;
 			margin-left: 14rpx;
-			height: 70rpx;
-			line-height: 70rpx;
+			height: 72rpx;
+			line-height: 72rpx;
 			color: $blue;
 			text-align: center;
 			border-radius: 70rpx;

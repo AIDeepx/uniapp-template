@@ -54,8 +54,8 @@
 		.z-radio-icon {
 			display: inline-block;
 			color: $gray-300;
-			font-size: 32rpx;
-			line-height: 32rpx;
+			font-size: 48rpx;
+			line-height: 48rpx;
 			&.is-checked {
 				color: $color-brand;
 			}

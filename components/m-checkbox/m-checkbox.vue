@@ -63,7 +63,7 @@
 
 <style lang="scss" scoped>
 	.checkbox {
-		height: 36rpx;
+		height: 48rpx;
 		margin-left: 20rpx;
 		display: flex;
 		align-items: center;
@@ -73,7 +73,7 @@
 		}
 
 		.iconfont {
-			font-size: 36rpx;
+			font-size: 48rpx;
 			color: $gray-300;
 			margin-right: 10rpx;
 

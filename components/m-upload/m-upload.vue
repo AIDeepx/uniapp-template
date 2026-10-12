@@ -110,7 +110,7 @@
 		&__image {
 			display: block;
 			width: 100%;
-			height: 140rpx;
+			height: 176rpx;
 			border-radius: $radius-md;
 			overflow: hidden;
 		}
@@ -129,11 +129,11 @@
 			z-index: 2;
 		}
 		&__btn {
-			line-height: 140rpx;
+			line-height: 176rpx;
 			text-align: center;
 			font-size: 40rpx;
-			color: $gray-400;
-			border: 1px dashed $gray-400;
+			color: $gray-300;
+			border: 1px dashed $gray-300;
 			border-radius: $radius-lg;
 		}
 	}

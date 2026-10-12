@@ -4,6 +4,7 @@ import Util from './utils/index.js'
 import Api from './server/api.js'
 import config from './utils/config.js'
 import { createSSRApp } from 'vue'
+import { createPinia } from 'pinia'
 // #ifndef VUE3
 import Vue from 'vue'
 // #endif
@@ -33,6 +34,7 @@ function install(proto) {
 // #ifdef VUE3
 export function createApp() {
   const app = createSSRApp(App)
+  app.use(createPinia())
   install(app.config.globalProperties)
   return { app }
 }

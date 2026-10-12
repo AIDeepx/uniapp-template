@@ -5,6 +5,11 @@
 //
 // 颜色：与 melon-ui 保持完全一致（hex 与运行端无关）
 // 尺寸：melon-ui 的 px × 2 → rpx（750rpx = 375px 设计稿）
+//
+// ⚠️ 局部 override（2026-10-12）：本项目对 6 处中性 / 功能辅助色对齐
+//    enterprise-design-system skill 规范（#F5222D / #F5F7FB / #262626 / #595959 /
+//    #999999 / #BFBFBF），品牌蓝等保留 melon-ui 值。若重跑 sync-theme.mjs，
+//    需同步改上游 melon-ui tokens.json 或本段，否则会被覆盖回 melon-ui 原值。
 // =========================================================================
 
 /* ---------- 原始色阶 ---------- */
@@ -24,7 +29,7 @@ $red-100: #FDE4D7;
 $red-200: #FCC3B0;
 $red-300: #F89A87;
 $red-400: #F17367;
-$red-500: #E83838;
+$red-500: #F5222D; // [override] 对齐 enterprise-design-system skill 紧急红
 $red-600: #C72836;
 $red-700: #A71C34;
 $red-800: #861130;
@@ -43,12 +48,12 @@ $green-900: #04545F;
 $green-950: #032C31;
 $gray-100: #F9FBFF;
 $gray-150: #E5EBF0;
-$gray-200: #CDD5DC;
+$gray-200: #BFBFBF; // [override] 对齐 skill 占位灰
 $gray-300: #B6BFC3;
-$gray-350: #9FA9AF;
-$gray-400: #6C7C86;
+$gray-350: #999999; // [override] 对齐 skill 辅助灰
+$gray-400: #595959; // [override] 对齐 skill 正文次色
 $gray-450: #2F3A42;
-$gray-500: #283036;
+$gray-500: #262626; // [override] 对齐 skill 正文主色
 $gray-600: #1D262E;
 $gray-700: #141C26;
 $gray-800: #0C141F;
@@ -76,7 +81,7 @@ $purple-900: #161576;
 $white: #FFFFFF;
 
 /* ---------- 背景 ---------- */
-$bg-base: #F2F5F9;
+$bg-base: #F5F7FB; // [override] 对齐 skill 页面底
 
 /* ---------- 字号（rpx） ---------- */
 $font-size-small: 24rpx;

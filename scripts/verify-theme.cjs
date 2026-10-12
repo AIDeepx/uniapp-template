@@ -49,10 +49,10 @@ try {
   // 断言若干关键值
   const checks = [
     ['color: #5192FF', '品牌色来自 melon-ui blue-500'],
-    ['background: #F2F5F9', '页面底色来自 tokens.json background'],
+    ['background: #F5F7FB', '页面底色对齐 enterprise-design-system skill'],
     ['border-radius: 8rpx', '圆角已换算为 rpx'],
     ['font-size: 28rpx', '字号已换算为 rpx'],
-    ['color: #E83838', '错误色来自 melon-ui red-500'],
+    ['color: #F5222D', '错误色对齐 enterprise-design-system skill'],
     ['color: #16C797', '成功色来自 melon-ui green-500'],
   ]
   let bad = 0

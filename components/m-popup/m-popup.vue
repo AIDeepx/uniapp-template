@@ -135,7 +135,7 @@
 			&--bottom {
 				width: 750rpx;
 				max-height: 76vh;
-				border-radius: $radius-lg $radius-lg 0 0;
+				border-radius: $radius-xl $radius-xl 0 0;
 			}
 			&--border .m-popup__head {
 				border-bottom: 1px solid $form-divider;
